@@ -212,6 +212,8 @@ export async function runChildProcess(
 
   return new Promise<RunProcessResult>((resolve, reject) => {
     const mergedEnv = ensurePathInEnv({ ...process.env, ...opts.env });
+    // Unset CLAUDECODE to prevent nested session detection when spawning Claude CLI
+    delete mergedEnv.CLAUDECODE;
     const child = spawn(command, args, {
       cwd: opts.cwd,
       env: mergedEnv,

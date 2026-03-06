@@ -30,3 +30,5 @@ export { approvalComments } from "./approval_comments.js";
 export { activityLog } from "./activity_log.js";
 export { companySecrets } from "./company_secrets.js";
 export { companySecretVersions } from "./company_secret_versions.js";
+export { maceDocuments } from "./mace_documents.js";
+export { maceChunks } from "./mace_chunks.js";
