@@ -1,0 +1,112 @@
+{
+  "$schema": "../schemas/project-template.json",
+  "name": "New Hospital Programme (NHP)",
+  "description": "Mace Consult Health Delivery Partnership — NEC4 contract, NHS compliance, RIBA stage gates. Mace Consult is programme management partner.",
+  "client": "Department of Health and Social Care",
+  "maceConsultRole": "Health Delivery Partner (HDP)",
+  "issuePrefix": "NHP",
+  "contractType": "NEC4",
+  "regulatoryFramework": ["NHS", "RIBA", "CDM", "Building Safety Act"],
+  "dataSources": {
+    "sharepoint": {
+      "siteUrl": "https://{tenant}.sharepoint.com/sites/{project-site}",
+      "drives": ["Documents", "Technical", "Commercial"],
+      "lists": ["Risk Register", "Decision Log", "Action Tracker"]
+    },
+    "dataverse": {
+      "environment": "CONSULT-NHP-CLIENT-03-PROD",
+      "tables": [
+        "cr_riskregister",
+        "cr_issuelog",
+        "cr_decisionrecord",
+        "cr_programmemilestone",
+        "cr_stakeholder"
+      ]
+    }
+  },
+  "agents": [
+    {
+      "name": "Risk Agent",
+      "role": "risk_manager",
+      "title": "Risk & Opportunity Manager",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "capabilities": "Monitor risk register, identify emerging risks from project documents, flag escalations, suggest mitigations based on precedent from other Mace projects",
+      "budgetMonthlyCents": 5000,
+      "skills": ["risk-assessment", "nec4-risk-clauses", "cross-project-precedent"],
+      "promptContext": "You are the Risk Agent for {projectName}. You monitor the risk register in Dataverse and scan all incoming documents for risk signals. When you identify a new or changing risk, create an issue. Use the Mace context to find how similar risks were handled on other projects."
+    },
+    {
+      "name": "Commercial Agent",
+      "role": "commercial_manager",
+      "title": "Commercial & Contracts Manager",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "capabilities": "Track variations and compensation events, review contractor correspondence, draft commercial responses, monitor contract compliance",
+      "budgetMonthlyCents": 5000,
+      "skills": ["nec4-contracts", "variation-tracking", "compensation-events"],
+      "promptContext": "You are the Commercial Agent for {projectName}. You review all commercial correspondence and contractor communications. You track compensation events and variations under NEC4. Draft responses using contractual language and cite relevant clauses."
+    },
+    {
+      "name": "Programme Agent",
+      "role": "programme_director",
+      "title": "Programme Director",
+      "adapterType": "claude_local",
+      "reportsTo": null,
+      "capabilities": "Monitor programme milestones, identify slippage, coordinate between agents, produce programme reports, escalate to human SRO",
+      "budgetMonthlyCents": 8000,
+      "skills": ["programme-reporting", "milestone-tracking", "stakeholder-comms"],
+      "promptContext": "You are the Programme Agent for {projectName}, leading the AI workforce. You coordinate Risk, Commercial, Compliance, and Knowledge agents. Produce weekly programme summaries. Escalate critical issues to the human SRO. Your goal is to ensure nothing falls through the cracks."
+    },
+    {
+      "name": "Compliance Agent",
+      "role": "compliance_officer",
+      "title": "Regulatory Compliance Officer",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "capabilities": "Check deliverables against RIBA stage gates, NHS requirements, CDM regulations, Building Safety Act compliance, flag gaps",
+      "budgetMonthlyCents": 3000,
+      "skills": ["riba-stages", "cdm-compliance", "building-safety-act", "nhs-requirements"],
+      "promptContext": "You are the Compliance Agent for {projectName}. You check all deliverables and decisions against regulatory requirements: RIBA stage gates, CDM 2015, Building Safety Act 2022, and NHS-specific requirements. Flag any gaps or non-compliance immediately."
+    },
+    {
+      "name": "Knowledge Agent",
+      "role": "knowledge_manager",
+      "title": "Knowledge & Document Manager",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "capabilities": "Continuously ingest documents from SharePoint and Dataverse, maintain the project knowledge index, answer queries from other agents, identify knowledge gaps",
+      "budgetMonthlyCents": 4000,
+      "skills": ["document-ingestion", "knowledge-indexing", "cross-project-search"],
+      "promptContext": "You are the Knowledge Agent for {projectName}. You are responsible for keeping the Mace context up to date. Ingest new documents as they appear in SharePoint and Dataverse. When other agents query you, provide relevant context with source citations. Identify when important knowledge is missing or outdated."
+    }
+  ],
+  "goals": [
+    {
+      "title": "Programme Delivery",
+      "description": "Deliver the hospital programme on time, on budget, and to specification",
+      "children": [
+        {
+          "title": "Risk Management",
+          "description": "Proactively identify and mitigate all programme risks",
+          "assignee": "Risk Agent"
+        },
+        {
+          "title": "Commercial Control",
+          "description": "Maintain commercial control of the contract and manage all variations",
+          "assignee": "Commercial Agent"
+        },
+        {
+          "title": "Regulatory Compliance",
+          "description": "Ensure all deliverables meet regulatory and statutory requirements",
+          "assignee": "Compliance Agent"
+        },
+        {
+          "title": "Knowledge Continuity",
+          "description": "Maintain complete, searchable institutional knowledge for the programme",
+          "assignee": "Knowledge Agent"
+        }
+      ]
+    }
+  ]
+}
