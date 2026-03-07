@@ -124,7 +124,15 @@ export async function createApp(
   api.use(maceRoutes(db));
   app.use("/api", api);
 
+  // Serve Mace Knowledge UI at /knowledge/
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const knowledgeUiDist = path.resolve(__dirname, "../../knowledge-ui/dist");
+  if (fs.existsSync(knowledgeUiDist)) {
+    app.use("/knowledge", express.static(knowledgeUiDist));
+    app.get("/knowledge/*", (_req, res) => {
+      res.sendFile(path.join(knowledgeUiDist, "index.html"));
+    });
+  }
   if (opts.uiMode === "static") {
     // Try published location first (server/ui-dist/), then monorepo dev location (../../ui/dist)
     const candidates = [
