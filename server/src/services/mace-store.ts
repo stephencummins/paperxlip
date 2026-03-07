@@ -5,7 +5,7 @@ interface MaceSearchResult {
 }
 
 const GEMINI_EMBED_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-005:embedContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent";
 
 /**
  * VectorStore handles document chunk storage and semantic search.
@@ -177,7 +177,7 @@ export class VectorStore {
     return chunks;
   }
 
-  /** Embed a single text string via Gemini text-embedding-005 */
+  /** Embed a single text string via Gemini gemini-embedding-001 */
   async embed(text: string): Promise<number[]> {
     if (!this.apiKey) return [];
     try {
@@ -185,7 +185,7 @@ export class VectorStore {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "models/text-embedding-005",
+          model: "models/gemini-embedding-001",
           content: { parts: [{ text }] },
         }),
       });
