@@ -1,4 +1,8 @@
-import type { SearchResult } from "../types.js";
+interface MaceSearchResult {
+  score: number;
+  chunk: { id: string; documentId: string; projectId: string; content: string; chunkIndex: number; embedding: number[]; metadata: Record<string, unknown> };
+  document: { id: string; projectId: string; sourceType: string; sourceUrl: string; title: string; content: string; mimeType: string; metadata: Record<string, unknown>; ingestedAt: Date; updatedAt: Date };
+}
 
 const GEMINI_EMBED_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-005:embedContent";
@@ -93,7 +97,7 @@ export class VectorStore {
   async search(
     query: string,
     options: { companyId?: string; excludeCompanyId?: string; limit?: number },
-  ): Promise<SearchResult[]> {
+  ): Promise<MaceSearchResult[]> {
     const pool = await this.getPool();
     const queryEmbedding = await this.embed(query);
     if (queryEmbedding.length === 0) return [];

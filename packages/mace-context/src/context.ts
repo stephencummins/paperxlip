@@ -32,7 +32,7 @@ export class MaceContext {
       const sp = new SharePointIngestor(config.sharepoint);
       const docs = await sp.fetchDocuments();
       for (const doc of docs) {
-        await this.store.upsertDocument({ ...doc, projectId });
+        await this.store.upsertDocument({ ...doc, companyId: projectId });
       }
     }
 
@@ -40,36 +40,29 @@ export class MaceContext {
       const dv = new DataverseIngestor(config.dataverse);
       const docs = await dv.fetchRecords();
       for (const doc of docs) {
-        await this.store.upsertDocument({ ...doc, projectId });
+        await this.store.upsertDocument({ ...doc, companyId: projectId });
       }
     }
   }
 
-  /**
-   * Search across all projects or scoped to one.
-   * This is the core synthesis query — an agent asks a question
-   * and gets back relevant chunks from any project's knowledge.
-   */
+  /** Search across all projects or scoped to one */
   async search(
     query: string,
-    options?: { projectId?: string; limit?: number },
+    options?: { companyId?: string; limit?: number },
   ): Promise<SearchResult[]> {
     return this.store.search(query, {
-      projectId: options?.projectId,
+      companyId: options?.companyId,
       limit: options?.limit ?? 10,
     });
   }
 
-  /**
-   * Cross-project pattern search.
-   * E.g. "contractor delay claims" returns precedent from every project.
-   */
+  /** Cross-project pattern search */
   async findPrecedent(
     topic: string,
-    options?: { excludeProjectId?: string; limit?: number },
+    options?: { excludeCompanyId?: string; limit?: number },
   ): Promise<SearchResult[]> {
     return this.store.search(topic, {
-      excludeProjectId: options?.excludeProjectId,
+      excludeCompanyId: options?.excludeCompanyId,
       limit: options?.limit ?? 20,
     });
   }

@@ -8,12 +8,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@microsoft/microsoft-graph-client": "^3.0.0",
     "@azure/identity": "^4.0.0",
+    "@microsoft/microsoft-graph-client": "^3.0.0",
     "drizzle-orm": "^0.44.0",
-    "pg": "^8.13.0"
+    "pg": "^8.18.0"
   },
   "devDependencies": {
+    "@types/pg": "^8.18.0",
     "typescript": "^5.8.0"
   }
 }
