@@ -129,7 +129,7 @@ export async function createApp(
   const knowledgeUiDist = path.resolve(__dirname, "../../knowledge-ui/dist");
   if (fs.existsSync(knowledgeUiDist)) {
     app.use("/knowledge", express.static(knowledgeUiDist));
-    app.get("/knowledge/*", (_req, res) => {
+    app.get("/knowledge/{*path}", (_req, res) => {
       res.sendFile(path.join(knowledgeUiDist, "index.html"));
     });
   }
