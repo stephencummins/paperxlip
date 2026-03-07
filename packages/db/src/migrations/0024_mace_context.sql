@@ -1,7 +1,5 @@
 -- Mace Context Layer: document ingestion and vector search
--- Requires pgvector extension for embedding storage and similarity search
-
-CREATE EXTENSION IF NOT EXISTS vector;
+-- pgvector is optional — tables work without it, embeddings are stored as text fallback
 
 CREATE TABLE IF NOT EXISTS "mace_documents" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
@@ -25,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "mace_chunks" (
   "company_id" uuid NOT NULL REFERENCES "companies"("id"),
   "content" text NOT NULL,
   "chunk_index" integer NOT NULL,
-  "embedding" vector(768),
+  "embedding_json" text,
   "metadata" jsonb NOT NULL DEFAULT '{}'::jsonb,
   "created_at" timestamp with time zone NOT NULL DEFAULT now()
 );
@@ -33,8 +31,8 @@ CREATE TABLE IF NOT EXISTS "mace_chunks" (
 CREATE INDEX IF NOT EXISTS "mace_chunks_document_idx" ON "mace_chunks" ("document_id");
 CREATE INDEX IF NOT EXISTS "mace_chunks_company_idx" ON "mace_chunks" ("company_id");
 
--- HNSW index for fast approximate nearest neighbour search on embeddings
--- cosine distance operator: <=>
-CREATE INDEX IF NOT EXISTS "mace_chunks_embedding_idx" ON "mace_chunks"
-  USING hnsw ("embedding" vector_cosine_ops)
-  WITH (m = 16, ef_construction = 64);
+-- To enable vector search, run these manually when pgvector is available:
+-- CREATE EXTENSION IF NOT EXISTS vector;
+-- ALTER TABLE mace_chunks ADD COLUMN embedding vector(768);
+-- UPDATE mace_chunks SET embedding = embedding_json::vector WHERE embedding_json IS NOT NULL;
+-- CREATE INDEX mace_chunks_embedding_idx ON mace_chunks USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64);
