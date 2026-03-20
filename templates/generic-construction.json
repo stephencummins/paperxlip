@@ -4,12 +4,21 @@
   "description": "Baseline template for any Mace construction project. Customise contract type and regulatory framework.",
   "issuePrefix": "PRJ",
   "contractType": "NEC4",
-  "regulatoryFramework": ["CDM", "Building Safety Act"],
+  "regulatoryFramework": [
+    "CDM",
+    "Building Safety Act",
+    "ISO 19650"
+  ],
   "dataSources": {
     "sharepoint": {
       "siteUrl": "https://{tenant}.sharepoint.com/sites/{project-site}",
-      "drives": ["Documents"],
-      "lists": ["Risk Register", "Action Tracker"]
+      "drives": [
+        "Documents"
+      ],
+      "lists": [
+        "Risk Register",
+        "Action Tracker"
+      ]
     }
   },
   "agents": [
@@ -21,7 +30,10 @@
       "reportsTo": null,
       "capabilities": "Coordinate all project agents, produce reports, escalate to human PM",
       "budgetMonthlyCents": 5000,
-      "skills": ["programme-reporting", "milestone-tracking"],
+      "skills": [
+        "programme-reporting",
+        "milestone-tracking"
+      ],
       "promptContext": "You are the Project Lead AI for {projectName}. Coordinate the team, track milestones, produce weekly summaries, and escalate critical issues."
     },
     {
@@ -32,7 +44,10 @@
       "reportsTo": "Project Lead",
       "capabilities": "Monitor risks, find precedent from other projects, flag escalations",
       "budgetMonthlyCents": 3000,
-      "skills": ["risk-assessment", "cross-project-precedent"],
+      "skills": [
+        "risk-assessment",
+        "cross-project-precedent"
+      ],
       "promptContext": "You are the Risk Agent for {projectName}. Monitor the risk register and use Mace context to find precedent from other projects."
     },
     {
@@ -43,7 +58,10 @@
       "reportsTo": "Project Lead",
       "capabilities": "Ingest documents, maintain project knowledge, answer queries",
       "budgetMonthlyCents": 3000,
-      "skills": ["document-ingestion", "knowledge-indexing"],
+      "skills": [
+        "document-ingestion",
+        "knowledge-indexing"
+      ],
       "promptContext": "You are the Knowledge Agent for {projectName}. Keep the Mace context current by ingesting new documents and answering queries from other agents."
     }
   ],
@@ -64,5 +82,19 @@
         }
       ]
     }
-  ]
+  ],
+  "informationManagement": {
+    "standard": "ISO 19650",
+    "hubSite": {
+      "description": "Each new project gets a SharePoint site provisioned from the Mace Control Centre hub site template. This ensures consistent document libraries, metadata, CDE workflows, and naming conventions across all Mace Consult projects.",
+      "templateSiteUrl": "https://mace365.sharepoint.com/sites/ControlCentre-ProjectTemplate",
+      "provisionedSitePattern": "https://mace365.sharepoint.com/sites/{projectCode}",
+      "cdeStructure": {
+        "workInProgress": "WIP",
+        "shared": "SHARED",
+        "published": "PUBLISHED",
+        "archived": "ARCHIVED"
+      }
+    }
+  }
 }

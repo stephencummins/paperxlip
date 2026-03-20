@@ -1,17 +1,31 @@
 {
   "$schema": "../schemas/project-template.json",
   "name": "New Hospital Programme (NHP)",
-  "description": "Mace Consult Health Delivery Partnership — NEC4 contract, NHS compliance, RIBA stage gates. Mace Consult is programme management partner.",
+  "description": "Mace Consult Health Delivery Partnership \u2014 NEC4 contract, NHS compliance, RIBA stage gates. Mace Consult is programme management partner.",
   "client": "Department of Health and Social Care",
   "maceConsultRole": "Health Delivery Partner (HDP)",
   "issuePrefix": "NHP",
   "contractType": "NEC4",
-  "regulatoryFramework": ["NHS", "RIBA", "CDM", "Building Safety Act"],
+  "regulatoryFramework": [
+    "NHS",
+    "RIBA",
+    "CDM",
+    "Building Safety Act",
+    "ISO 19650"
+  ],
   "dataSources": {
     "sharepoint": {
       "siteUrl": "https://{tenant}.sharepoint.com/sites/{project-site}",
-      "drives": ["Documents", "Technical", "Commercial"],
-      "lists": ["Risk Register", "Decision Log", "Action Tracker"]
+      "drives": [
+        "Documents",
+        "Technical",
+        "Commercial"
+      ],
+      "lists": [
+        "Risk Register",
+        "Decision Log",
+        "Action Tracker"
+      ]
     },
     "dataverse": {
       "environment": "CONSULT-NHP-CLIENT-03-PROD",
@@ -33,7 +47,11 @@
       "reportsTo": "Programme Agent",
       "capabilities": "Monitor risk register, identify emerging risks from project documents, flag escalations, suggest mitigations based on precedent from other Mace projects",
       "budgetMonthlyCents": 5000,
-      "skills": ["risk-assessment", "nec4-risk-clauses", "cross-project-precedent"],
+      "skills": [
+        "risk-assessment",
+        "nec4-risk-clauses",
+        "cross-project-precedent"
+      ],
       "promptContext": "You are the Risk Agent for {projectName}. You monitor the risk register in Dataverse and scan all incoming documents for risk signals. When you identify a new or changing risk, create an issue. Use the Mace context to find how similar risks were handled on other projects."
     },
     {
@@ -44,7 +62,11 @@
       "reportsTo": "Programme Agent",
       "capabilities": "Track variations and compensation events, review contractor correspondence, draft commercial responses, monitor contract compliance",
       "budgetMonthlyCents": 5000,
-      "skills": ["nec4-contracts", "variation-tracking", "compensation-events"],
+      "skills": [
+        "nec4-contracts",
+        "variation-tracking",
+        "compensation-events"
+      ],
       "promptContext": "You are the Commercial Agent for {projectName}. You review all commercial correspondence and contractor communications. You track compensation events and variations under NEC4. Draft responses using contractual language and cite relevant clauses."
     },
     {
@@ -55,7 +77,11 @@
       "reportsTo": null,
       "capabilities": "Monitor programme milestones, identify slippage, coordinate between agents, produce programme reports, escalate to human SRO",
       "budgetMonthlyCents": 8000,
-      "skills": ["programme-reporting", "milestone-tracking", "stakeholder-comms"],
+      "skills": [
+        "programme-reporting",
+        "milestone-tracking",
+        "stakeholder-comms"
+      ],
       "promptContext": "You are the Programme Agent for {projectName}, leading the AI workforce. You coordinate Risk, Commercial, Compliance, and Knowledge agents. Produce weekly programme summaries. Escalate critical issues to the human SRO. Your goal is to ensure nothing falls through the cracks."
     },
     {
@@ -64,9 +90,16 @@
       "title": "Regulatory Compliance Officer",
       "adapterType": "claude_local",
       "reportsTo": "Programme Agent",
-      "capabilities": "Check deliverables against RIBA stage gates, NHS requirements, CDM regulations, Building Safety Act compliance, flag gaps",
+      "capabilities": "Check deliverables against RIBA stage gates, NHS requirements, CDM regulations, Building Safety Act compliance, flag gaps, verify ISO 19650 information management compliance, audit CDE status codes and naming conventions",
       "budgetMonthlyCents": 3000,
-      "skills": ["riba-stages", "cdm-compliance", "building-safety-act", "nhs-requirements"],
+      "skills": [
+        "riba-stages",
+        "cdm-compliance",
+        "building-safety-act",
+        "nhs-requirements",
+        "iso-19650-compliance",
+        "document-generation"
+      ],
       "promptContext": "You are the Compliance Agent for {projectName}. You check all deliverables and decisions against regulatory requirements: RIBA stage gates, CDM 2015, Building Safety Act 2022, and NHS-specific requirements. Flag any gaps or non-compliance immediately."
     },
     {
@@ -75,9 +108,14 @@
       "title": "Knowledge & Document Manager",
       "adapterType": "claude_local",
       "reportsTo": "Programme Agent",
-      "capabilities": "Continuously ingest documents from SharePoint and Dataverse, maintain the project knowledge index, answer queries from other agents, identify knowledge gaps",
+      "capabilities": "Continuously ingest documents from SharePoint and Dataverse, maintain the project knowledge index, answer queries from other agents, identify knowledge gaps, generate document packs from templates for new project stages",
       "budgetMonthlyCents": 4000,
-      "skills": ["document-ingestion", "knowledge-indexing", "cross-project-search"],
+      "skills": [
+        "document-ingestion",
+        "knowledge-indexing",
+        "cross-project-search",
+        "document-generation"
+      ],
       "promptContext": "You are the Knowledge Agent for {projectName}. You are responsible for keeping the Mace context up to date. Ingest new documents as they appear in SharePoint and Dataverse. When other agents query you, provide relevant context with source citations. Identify when important knowledge is missing or outdated."
     }
   ],
@@ -108,5 +146,85 @@
         }
       ]
     }
-  ]
+  ],
+  "informationManagement": {
+    "standard": "ISO 19650",
+    "parts": [
+      "Part 1: Concepts and principles",
+      "Part 2: Delivery phase",
+      "Part 3: Operational phase"
+    ],
+    "hubSite": {
+      "description": "SharePoint hub site provisioned per project from Mace Control Centre template. Contains standardised document library structure, CDE workflows, and ISO 19650 compliance artifacts.",
+      "templateSiteUrl": "https://mace365.sharepoint.com/sites/ControlCentre-ProjectTemplate",
+      "provisionedSitePattern": "https://mace365.sharepoint.com/sites/{projectCode}",
+      "cdeStructure": {
+        "workInProgress": "WIP \u2014 drafts and working documents, not shared externally",
+        "shared": "SHARED \u2014 documents issued for review/comment between task teams",
+        "published": "PUBLISHED \u2014 approved documents for use on the project",
+        "archived": "ARCHIVED \u2014 superseded or withdrawn documents"
+      },
+      "documentLibraries": [
+        "01 Management Plans",
+        "02 Employer Information Requirements",
+        "03 BIM Execution Plans",
+        "04 Asset Information Requirements",
+        "05 Task Information Delivery Plans",
+        "06 Programme Reports",
+        "07 Risk and Compliance",
+        "08 Commercial",
+        "09 Design",
+        "10 Construction",
+        "11 Health and Safety",
+        "12 Stakeholder"
+      ],
+      "metadataColumns": [
+        {
+          "name": "DocumentStatus",
+          "type": "choice",
+          "values": [
+            "WIP",
+            "S1-Coordination",
+            "S2-Information",
+            "S3-Review",
+            "S4-Approval",
+            "A-Approved",
+            "B-Partial",
+            "CR-As-built"
+          ]
+        },
+        {
+          "name": "Suitability",
+          "type": "choice",
+          "values": [
+            "S0-Initial",
+            "S1-Coordination",
+            "S2-Information",
+            "S3-Review",
+            "S4-Approval"
+          ]
+        },
+        {
+          "name": "Revision",
+          "type": "text"
+        },
+        {
+          "name": "Originator",
+          "type": "text"
+        },
+        {
+          "name": "FunctionalBreakdown",
+          "type": "text"
+        },
+        {
+          "name": "Classification",
+          "type": "choice",
+          "values": [
+            "OFFICIAL",
+            "OFFICIAL-SENSITIVE"
+          ]
+        }
+      ]
+    }
+  }
 }
