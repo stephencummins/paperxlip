@@ -53,6 +53,7 @@ function templateToManifest(
       slug,
       name: agentName,
       path: `agents/${slug}.md`,
+      skills: (a.skills as string[]) ?? [],
       role: (a.role as string) ?? "general",
       title: (a.title as string) ?? null,
       icon: (a.icon as string) ?? null,
@@ -89,16 +90,20 @@ function templateToManifest(
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     source: null,
-    includes: { company: true, agents: true },
+    includes: { company: true, agents: true, projects: false, issues: false, skills: false },
     company: {
       path: companyPath,
       name,
       description,
       brandColor: null,
+      logoPath: null,
       requireBoardApprovalForNewAgents: false,
     },
     agents: manifestAgents,
-    requiredSecrets: [],
+    skills: [],
+    projects: [],
+    issues: [],
+    envInputs: [],
   };
 
   return { manifest, files };

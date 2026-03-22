@@ -1,8 +1,10 @@
 export { healthRoutes } from "./health.js";
 export { companyRoutes } from "./companies.js";
+export { companySkillRoutes } from "./company-skills.js";
 export { agentRoutes } from "./agents.js";
 export { projectRoutes } from "./projects.js";
 export { issueRoutes } from "./issues.js";
+export { routineRoutes } from "./routines.js";
 export { goalRoutes } from "./goals.js";
 export { approvalRoutes } from "./approvals.js";
 export { secretRoutes } from "./secrets.js";
@@ -13,3 +15,4 @@ export { sidebarBadgeRoutes } from "./sidebar-badges.js";
 export { llmRoutes } from "./llms.js";
 export { accessRoutes } from "./access.js";
 export { maceRoutes } from "./mace.js";
+export { instanceSettingsRoutes } from "./instance-settings.js";

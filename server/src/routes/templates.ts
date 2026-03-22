@@ -39,7 +39,6 @@ export function templateRoutes(db: Db) {
     const preview = await portability.previewImport({
       source: {
         type: "inline",
-        manifest: converted.manifest,
         files: converted.files,
       },
       target: req.body.companyId
@@ -68,7 +67,6 @@ export function templateRoutes(db: Db) {
       {
         source: {
           type: "inline",
-          manifest: converted.manifest,
           files: converted.files,
         },
         target: req.body.companyId
