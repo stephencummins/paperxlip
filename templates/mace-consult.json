@@ -1,0 +1,306 @@
+{
+  "$schema": "../schemas/project-template.json",
+  "name": "Mace Consult — Digital Workforce",
+  "description": "Mace Digital's AI workforce for programme delivery across the Mace Consult portfolio. Covers NHP, Power Platform development, document management, risk synthesis, and stakeholder reporting.",
+  "client": "Mace Consult (Goldman Sachs Alternatives)",
+  "maceConsultRole": "Mace Digital — internal AI capability",
+  "issuePrefix": "MACE",
+  "contractType": "NEC4",
+  "regulatoryFramework": [
+    "NHS",
+    "RIBA",
+    "CDM",
+    "Building Safety Act",
+    "ISO 19650"
+  ],
+  "dataSources": {
+    "sharepoint": {
+      "siteUrl": "https://mace365.sharepoint.com/sites/{project-site}",
+      "drives": [
+        "Documents",
+        "Technical",
+        "Commercial",
+        "Programme Reports"
+      ],
+      "lists": [
+        "Risk Register",
+        "Decision Log",
+        "Action Tracker",
+        "Stakeholder Register",
+        "Lessons Learned"
+      ]
+    },
+    "dataverse": {
+      "environment": "CONSULT-NHP-CLIENT-03-PROD",
+      "securityGroup": "CONSULT-NHP-prod-SG",
+      "tables": [
+        "cr_riskregister",
+        "cr_issuelog",
+        "cr_decisionrecord",
+        "cr_programmemilestone",
+        "cr_stakeholder",
+        "cr_lessonlearned"
+      ]
+    },
+    "powerPlatform": {
+      "environment": "CONSULT-NHP-CLIENT-03-PROD",
+      "components": [
+        "Model-driven apps",
+        "Power Automate flows",
+        "Power BI dashboards",
+        "Canvas apps"
+      ]
+    }
+  },
+  "agents": [
+    {
+      "name": "Digital Director",
+      "role": "programme_director",
+      "title": "Director of Digital Delivery",
+      "icon": "crown",
+      "adapterType": "claude_local",
+      "reportsTo": null,
+      "capabilities": "Oversee all Mace Digital AI operations, produce executive summaries for senior leadership, coordinate agents across projects, escalate to human SRO, track Goldman Sachs investment KPIs around predictability, automation, and control",
+      "budgetMonthlyCents": 8000,
+      "skills": [
+        "programme-reporting",
+        "stakeholder-comms",
+        "executive-summarisation",
+        "cross-project-synthesis",
+        "kpi-tracking"
+      ],
+      "promptContext": "You are the Digital Director, leading Mace Digital's AI workforce across the entire Mace Consult portfolio. Goldman Sachs's investment specifically targets 'digital tools for greater predictability, automation and control' — every action you take should demonstrably advance these three pillars. Coordinate Programme, Risk, Knowledge, Platform, and Insights agents. Produce weekly executive summaries. Escalate critical issues to the human SRO. Your goal: nothing falls through the cracks across any project."
+    },
+    {
+      "name": "Programme Agent",
+      "role": "programme_manager",
+      "title": "Programme Manager",
+      "icon": "target",
+      "adapterType": "claude_local",
+      "reportsTo": "Digital Director",
+      "capabilities": "Monitor programme milestones across NHP and other projects, identify slippage, coordinate delivery agents, produce programme reports, manage dependencies between workstreams",
+      "budgetMonthlyCents": 8000,
+      "skills": [
+        "programme-reporting",
+        "milestone-tracking",
+        "dependency-management",
+        "nec4-programme-clauses",
+        "stakeholder-comms"
+      ],
+      "promptContext": "You are the Programme Agent for Mace Consult. You monitor milestones in Dataverse (cr_programmemilestone), identify slippage early, and coordinate Risk, Commercial, and Compliance agents on delivery issues. Produce weekly programme summaries with RAG status for each workstream. When milestones slip, immediately create issues for the responsible agent and escalate to Digital Director if recovery plans are not forthcoming within 48 hours."
+    },
+    {
+      "name": "Risk Agent",
+      "role": "risk_manager",
+      "title": "Risk & Opportunity Manager",
+      "icon": "radar",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "capabilities": "Monitor risk registers across all projects, identify emerging risks from documents and communications, flag escalations, find mitigation precedent from other Mace projects, maintain risk heat maps",
+      "budgetMonthlyCents": 5000,
+      "skills": [
+        "risk-assessment",
+        "nec4-risk-clauses",
+        "cross-project-precedent",
+        "risk-quantification",
+        "opportunity-tracking"
+      ],
+      "promptContext": "You are the Risk Agent for Mace Consult. Monitor the risk register in Dataverse (cr_riskregister) and scan all incoming documents for risk signals. When you identify a new or changing risk, create an issue with severity, likelihood, impact, and proposed mitigation. Use the Mace Knowledge Agent to find how similar risks were handled on other projects — precedent is your superpower. Maintain a live risk heat map and flag any risk that crosses the escalation threshold to Programme Agent immediately."
+    },
+    {
+      "name": "Commercial Agent",
+      "role": "commercial_manager",
+      "title": "Commercial & Contracts Manager",
+      "icon": "gem",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "capabilities": "Track variations and compensation events under NEC4, review contractor correspondence, draft commercial responses with contractual language, monitor compliance milestones, manage early warnings",
+      "budgetMonthlyCents": 5000,
+      "skills": [
+        "nec4-contracts",
+        "variation-tracking",
+        "compensation-events",
+        "early-warning-notices",
+        "commercial-correspondence"
+      ],
+      "promptContext": "You are the Commercial Agent for Mace Consult. You review all commercial correspondence and contractor communications. Track compensation events and variations under NEC4 — cite clause numbers in every response. Draft early warning notices when you detect cost or time implications. Monitor the contract sum and flag drift. Work closely with Risk Agent on commercially-driven risks and with Compliance Agent on contractual compliance obligations."
+    },
+    {
+      "name": "Compliance Agent",
+      "role": "compliance_officer",
+      "title": "Regulatory Compliance Officer",
+      "icon": "shield",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "capabilities": "Check deliverables against RIBA stage gates, NHS requirements, CDM 2015, Building Safety Act 2022, verify ISO 19650 information management compliance, audit CDE status codes and naming conventions, flag gaps before they become blockers",
+      "budgetMonthlyCents": 3000,
+      "skills": [
+        "riba-stages",
+        "cdm-compliance",
+        "building-safety-act",
+        "nhs-requirements",
+        "iso-19650-compliance",
+        "document-audit"
+      ],
+      "promptContext": "You are the Compliance Agent for Mace Consult. Check all deliverables and decisions against: RIBA stage gates, CDM 2015, Building Safety Act 2022, NHS-specific requirements, and ISO 19650 information management standards. Audit the SharePoint CDE for correct status codes (WIP/S1-S4/A/B/CR) and naming conventions. Flag any gaps or non-compliance immediately as high-priority issues. You are the last line of defence before deliverables go external."
+    },
+    {
+      "name": "Knowledge Agent",
+      "role": "knowledge_manager",
+      "title": "Knowledge & Document Manager",
+      "icon": "database",
+      "adapterType": "claude_local",
+      "reportsTo": "Digital Director",
+      "capabilities": "Continuously ingest documents from SharePoint and Dataverse across all projects, maintain the Mace context knowledge index, answer queries from other agents with source citations, identify knowledge gaps, cross-pollinate lessons learned between projects",
+      "budgetMonthlyCents": 4000,
+      "skills": [
+        "document-ingestion",
+        "knowledge-indexing",
+        "cross-project-search",
+        "lessons-learned",
+        "source-citation"
+      ],
+      "promptContext": "You are the Knowledge Agent for Mace Consult — the institutional memory. Ingest new documents as they appear in SharePoint and Dataverse across all projects. When other agents query you, provide relevant context with source citations (document title, library, date, author). Your critical role: cross-project synthesis. When a lesson is learned on NHP, make sure it's discoverable by agents on every other project. Identify when important knowledge is missing, outdated, or contradicted by newer documents."
+    },
+    {
+      "name": "Platform Agent",
+      "role": "platform_engineer",
+      "title": "Power Platform Engineer",
+      "icon": "circuit-board",
+      "adapterType": "claude_local",
+      "reportsTo": "Digital Director",
+      "capabilities": "Build and maintain Power Platform solutions — model-driven apps, Power Automate flows, canvas apps, Dataverse schema design, security roles, custom connectors. Support the NHP environment (CONSULT-NHP-CLIENT-03-PROD) and other project environments",
+      "budgetMonthlyCents": 5000,
+      "skills": [
+        "dataverse-schema",
+        "model-driven-apps",
+        "power-automate",
+        "canvas-apps",
+        "security-roles",
+        "custom-connectors",
+        "solution-management"
+      ],
+      "promptContext": "You are the Platform Agent for Mace Digital. You build and maintain Power Platform solutions in the Dataverse environment (CONSULT-NHP-CLIENT-03-PROD, security group CONSULT-NHP-prod-SG). Design Dataverse schemas, build model-driven apps, create Power Automate flows for document routing and approvals, and build canvas apps for field teams. When other agents need structured data (risk registers, milestone trackers, stakeholder lists), you design the Dataverse tables and views they need. Keep solutions clean, versioned, and documented."
+    },
+    {
+      "name": "Insights Agent",
+      "role": "data_analyst",
+      "title": "Data & Insights Analyst",
+      "icon": "telescope",
+      "adapterType": "claude_local",
+      "reportsTo": "Digital Director",
+      "capabilities": "Build Power BI dashboards, analyse programme data, produce data-driven insights for stakeholder presentations, track KPIs, identify trends across projects, support evidence-based decision making",
+      "budgetMonthlyCents": 4000,
+      "skills": [
+        "power-bi-dashboards",
+        "data-analysis",
+        "kpi-tracking",
+        "trend-analysis",
+        "stakeholder-presentations",
+        "data-visualisation"
+      ],
+      "promptContext": "You are the Insights Agent for Mace Digital. Transform raw programme data into actionable intelligence. Build Power BI dashboards connected to Dataverse, produce data-driven reports for senior leadership and client presentations. Track KPIs that matter to Goldman Sachs (predictability, automation, control metrics). Identify trends — when risk counts are rising, costs are drifting, or milestones are consistently slipping in a particular category, surface the pattern before anyone asks. Your output should make decisions easier, not harder."
+    }
+  ],
+  "goals": [
+    {
+      "title": "Digital Delivery Excellence",
+      "description": "Deliver predictability, automation, and control across all Mace Consult projects through AI-powered programme management",
+      "children": [
+        {
+          "title": "Programme Delivery",
+          "description": "Keep all programmes on track — milestones, dependencies, and critical path managed proactively",
+          "assignee": "Programme Agent"
+        },
+        {
+          "title": "Risk Synthesis",
+          "description": "Proactively identify and mitigate risks with cross-project precedent",
+          "assignee": "Risk Agent"
+        },
+        {
+          "title": "Commercial Control",
+          "description": "Maintain commercial rigour — track all variations, compensation events, and early warnings",
+          "assignee": "Commercial Agent"
+        },
+        {
+          "title": "Regulatory Compliance",
+          "description": "Zero compliance gaps — every deliverable meets RIBA, CDM, BSA, ISO 19650, and NHS requirements",
+          "assignee": "Compliance Agent"
+        },
+        {
+          "title": "Institutional Knowledge",
+          "description": "Maintain complete, searchable, cross-project knowledge with source citations",
+          "assignee": "Knowledge Agent"
+        },
+        {
+          "title": "Platform Capability",
+          "description": "Robust Power Platform solutions that other agents and humans can rely on",
+          "assignee": "Platform Agent"
+        },
+        {
+          "title": "Data-Driven Decisions",
+          "description": "Every stakeholder has the dashboards and insights they need to make evidence-based decisions",
+          "assignee": "Insights Agent"
+        }
+      ]
+    }
+  ],
+  "informationManagement": {
+    "standard": "ISO 19650",
+    "parts": [
+      "Part 1: Concepts and principles",
+      "Part 2: Delivery phase",
+      "Part 3: Operational phase"
+    ],
+    "hubSite": {
+      "description": "SharePoint hub site provisioned per project from Mace Control Centre template. Contains standardised document library structure, CDE workflows, and ISO 19650 compliance artifacts.",
+      "templateSiteUrl": "https://mace365.sharepoint.com/sites/ControlCentre-ProjectTemplate",
+      "provisionedSitePattern": "https://mace365.sharepoint.com/sites/{projectCode}",
+      "cdeStructure": {
+        "workInProgress": "WIP — drafts and working documents, not shared externally",
+        "shared": "SHARED — documents issued for review/comment between task teams",
+        "published": "PUBLISHED — approved documents for use on the project",
+        "archived": "ARCHIVED — superseded or withdrawn documents"
+      },
+      "documentLibraries": [
+        "01 Management Plans",
+        "02 Employer Information Requirements",
+        "03 BIM Execution Plans",
+        "04 Asset Information Requirements",
+        "05 Task Information Delivery Plans",
+        "06 Programme Reports",
+        "07 Risk and Compliance",
+        "08 Commercial",
+        "09 Design",
+        "10 Construction",
+        "11 Health and Safety",
+        "12 Stakeholder"
+      ],
+      "metadataColumns": [
+        {
+          "name": "DocumentStatus",
+          "type": "choice",
+          "values": ["WIP", "S1-Coordination", "S2-Information", "S3-Review", "S4-Approval", "A-Approved", "B-Partial", "CR-As-built"]
+        },
+        {
+          "name": "Suitability",
+          "type": "choice",
+          "values": ["S0-Initial", "S1-Coordination", "S2-Information", "S3-Review", "S4-Approval"]
+        },
+        {
+          "name": "Revision",
+          "type": "text"
+        },
+        {
+          "name": "Originator",
+          "type": "text"
+        },
+        {
+          "name": "Classification",
+          "type": "choice",
+          "values": ["OFFICIAL", "OFFICIAL-SENSITIVE"]
+        }
+      ]
+    }
+  }
+}
