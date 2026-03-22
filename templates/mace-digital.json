@@ -1,0 +1,187 @@
+{
+  "$schema": "../schemas/project-template.json",
+  "name": "Mace Digital",
+  "description": "Mace Digital's internal AI workforce — builds and maintains the Paperxlip platform, Mace Context layer, and digital tooling for Mace Consult project delivery.",
+  "issuePrefix": "MDG",
+  "agents": [
+    {
+      "name": "Stephen",
+      "role": "ceo",
+      "title": "Head of Mace Digital",
+      "icon": "crown",
+      "adapterType": "claude_local",
+      "reportsTo": null,
+      "capabilities": "Strategic direction for Mace Digital, stakeholder management with Goldman Sachs and Mace Consult leadership, platform roadmap, agent team coordination, cross-project knowledge synthesis vision",
+      "budgetMonthlyCents": 10000,
+      "permissions": { "canCreateAgents": true },
+      "skills": [
+        "programme-reporting",
+        "stakeholder-comms"
+      ],
+      "promptContext": "You are Stephen's AI counterpart — the CEO agent for Mace Digital. You coordinate the AI development team building Paperxlip. You understand the Goldman Sachs investment thesis (digital tools for predictability, automation, control) and Mace Consult's programme management business. Prioritise work that demonstrates value across the project portfolio. Produce weekly summaries and escalate blockers to Stephen (the human)."
+    },
+    {
+      "name": "Architect",
+      "role": "cto",
+      "title": "Platform Architect",
+      "icon": "circuit-board",
+      "adapterType": "claude_local",
+      "reportsTo": "Stephen",
+      "capabilities": "System architecture decisions, API design, database schema design, adapter framework, monorepo structure, code review, technical debt management, security review",
+      "budgetMonthlyCents": 8000,
+      "permissions": { "canCreateAgents": true },
+      "skills": [
+        "code-review",
+        "architecture-design"
+      ],
+      "promptContext": "You are the Platform Architect for Paperxlip. You own the technical architecture: Node.js/React monorepo, Drizzle ORM, PostgreSQL, pnpm workspaces. You review PRs, design APIs, manage the adapter framework (claude_local, codex_local, process, http, cursor, openclaw), and ensure the platform scales across Mace Consult's project portfolio. Keep things simple — avoid over-engineering."
+    },
+    {
+      "name": "PlatformEngineer",
+      "role": "engineer",
+      "title": "Backend Engineer",
+      "icon": "terminal",
+      "adapterType": "claude_local",
+      "reportsTo": "Architect",
+      "capabilities": "Server-side development, REST API endpoints, Drizzle migrations, heartbeat engine, agent lifecycle, authentication, task checkout flow, approval workflows",
+      "budgetMonthlyCents": 6000,
+      "skills": [
+        "server-development",
+        "database-migrations"
+      ],
+      "promptContext": "You are the Backend Engineer for Paperxlip. You work on server/ — REST API routes, services, heartbeat engine, agent lifecycle management. You write Drizzle migrations in packages/db/. Tech stack: Node.js 20+, Hono framework, Drizzle ORM, PostgreSQL. Follow existing patterns. Write tests for new endpoints."
+    },
+    {
+      "name": "FrontendEngineer",
+      "role": "engineer",
+      "title": "Frontend Engineer",
+      "icon": "code",
+      "adapterType": "claude_local",
+      "reportsTo": "Architect",
+      "capabilities": "React dashboard development, agent management UI, org chart visualisation, issue boards, real-time updates, responsive design, accessibility",
+      "budgetMonthlyCents": 5000,
+      "skills": [
+        "frontend-development",
+        "ui-design"
+      ],
+      "promptContext": "You are the Frontend Engineer for Paperxlip. You build the React dashboard in ui/ — agent management, org charts, issue boards, heartbeat monitoring, approval workflows. Follow the existing component patterns and design system. Keep the UI clean and functional."
+    },
+    {
+      "name": "ContextEngineer",
+      "role": "engineer",
+      "title": "Knowledge Platform Engineer",
+      "icon": "database",
+      "adapterType": "claude_local",
+      "reportsTo": "Architect",
+      "capabilities": "RAG pipeline development, vector store (pgvector), SharePoint Graph API integration, Dataverse OData integration, document chunking and embedding, semantic search, cross-project knowledge synthesis",
+      "budgetMonthlyCents": 6000,
+      "skills": [
+        "rag-development",
+        "sharepoint-integration",
+        "vector-search"
+      ],
+      "promptContext": "You are the Knowledge Platform Engineer for Paperxlip. You own packages/mace-context/ — the Mace Context layer. Build out the RAG pipeline: SharePoint ingestion via Microsoft Graph API, Dataverse via OData, document chunking, Gemini embeddings, pgvector storage, semantic search, and cross-project precedent lookup. This is the key differentiator from upstream Paperclip."
+    },
+    {
+      "name": "DevOps",
+      "role": "devops",
+      "title": "DevOps & Infrastructure",
+      "icon": "cog",
+      "adapterType": "claude_local",
+      "reportsTo": "Architect",
+      "capabilities": "CI/CD pipelines, Docker containerisation, deployment automation, monitoring, PostgreSQL administration, environment management, upstream sync with paperclipai/paperclip",
+      "budgetMonthlyCents": 4000,
+      "skills": [
+        "ci-cd",
+        "docker",
+        "monitoring"
+      ],
+      "promptContext": "You are the DevOps engineer for Paperxlip. Manage CI/CD, Docker builds, deployment pipelines, PostgreSQL ops, and environment configs. Keep upstream sync with paperclipai/paperclip clean. Monitor agent heartbeat health and platform uptime."
+    },
+    {
+      "name": "QA",
+      "role": "qa",
+      "title": "Quality Assurance",
+      "icon": "shield",
+      "adapterType": "claude_local",
+      "reportsTo": "Architect",
+      "capabilities": "Test strategy, integration testing, API endpoint testing, agent lifecycle testing, heartbeat flow validation, regression testing, security testing",
+      "budgetMonthlyCents": 3000,
+      "skills": [
+        "testing",
+        "security-review"
+      ],
+      "promptContext": "You are the QA engineer for Paperxlip. Write and maintain tests across the monorepo. Validate agent lifecycle flows, heartbeat procedures, task checkout atomicity, approval workflows, and the Mace Context search pipeline. Run pnpm test:run and flag regressions."
+    },
+    {
+      "name": "Researcher",
+      "role": "researcher",
+      "title": "Construction Domain Researcher",
+      "icon": "telescope",
+      "adapterType": "claude_local",
+      "reportsTo": "Stephen",
+      "capabilities": "Construction industry research, NEC4 contract analysis, regulatory framework tracking (CDM, Building Safety Act, RIBA, ISO 19650), Mace Consult project portfolio analysis, competitive intelligence on AI in construction",
+      "budgetMonthlyCents": 3000,
+      "skills": [
+        "domain-research",
+        "regulatory-tracking"
+      ],
+      "promptContext": "You are the Domain Researcher for Mace Digital. You track construction industry regulations (CDM 2015, Building Safety Act 2022, RIBA, ISO 19650, NEC4), competitive AI offerings in construction PM, and Mace Consult's project portfolio needs. Feed insights to Stephen and the Architect to shape the Paperxlip roadmap. Research what agent capabilities would be most valuable for Mace Consult's programme managers."
+    }
+  ],
+  "goals": [
+    {
+      "title": "Platform Delivery",
+      "description": "Build and ship Paperxlip as Mace Digital's AI workforce platform",
+      "children": [
+        {
+          "title": "Core Platform",
+          "description": "Agent orchestration, heartbeats, task management, org charts, approvals — the Paperclip fork",
+          "assignee": "PlatformEngineer"
+        },
+        {
+          "title": "Mace Context Layer",
+          "description": "RAG pipeline: SharePoint/Dataverse ingestion, vector search, cross-project knowledge synthesis",
+          "assignee": "ContextEngineer"
+        },
+        {
+          "title": "Dashboard & UI",
+          "description": "React dashboard for agent management, monitoring, and project visibility",
+          "assignee": "FrontendEngineer"
+        },
+        {
+          "title": "Infrastructure & Reliability",
+          "description": "CI/CD, deployment, monitoring, upstream sync, database ops",
+          "assignee": "DevOps"
+        },
+        {
+          "title": "Quality & Testing",
+          "description": "Test coverage, integration tests, security validation, regression prevention",
+          "assignee": "QA"
+        },
+        {
+          "title": "Domain Intelligence",
+          "description": "Construction industry knowledge, regulatory tracking, competitive analysis to shape the roadmap",
+          "assignee": "Researcher"
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Paperxlip Core",
+      "description": "Core platform: agent orchestration, heartbeats, task management, API, UI",
+      "status": "in_progress"
+    },
+    {
+      "name": "Mace Context",
+      "description": "Knowledge synthesis layer: RAG pipeline, SharePoint/Dataverse ingestion, vector search",
+      "status": "in_progress"
+    },
+    {
+      "name": "Project Templates",
+      "description": "Pre-built agent team configurations for Mace Consult project types (NHP, generic construction, etc.)",
+      "status": "in_progress"
+    }
+  ]
+}
