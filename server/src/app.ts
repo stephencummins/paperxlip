@@ -25,6 +25,7 @@ import { llmRoutes } from "./routes/llms.js";
 import { assetRoutes } from "./routes/assets.js";
 import { accessRoutes } from "./routes/access.js";
 import { maceRoutes } from "./routes/mace.js";
+import { templateRoutes } from "./routes/templates.js";
 import type { BetterAuthSessionResult } from "./auth/better-auth.js";
 
 type UiMode = "none" | "static" | "vite-dev";
@@ -122,6 +123,7 @@ export async function createApp(
     }),
   );
   api.use(maceRoutes(db));
+  api.use("/templates", templateRoutes(db));
   app.use("/api", api);
 
   // Serve Mace Knowledge UI at /knowledge/
