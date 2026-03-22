@@ -359,10 +359,289 @@ await db.insert(issues).values([
   },
 ]);
 
-console.log("Seed complete — Mace Digital team ready");
+console.log("Seed: Mace Digital team ready");
 console.log(`  Company: ${maceDig!.name} (${maceDig!.id})`);
-console.log(`  Agents: 8 (Stephen → Architect → [Platform, Frontend, Context, DevOps, QA] + Researcher)`);
-console.log(`  Goals: 7 (1 company + 6 team)`);
-console.log(`  Projects: 3`);
-console.log(`  Issues: 6 starter tasks`);
+console.log(`  Agents: 8 | Goals: 7 | Projects: 3 | Issues: 6`);
+
+// =============================================================================
+// Stephen8n.com — Stephen's personal app platform
+// =============================================================================
+
+const [s8n] = await db
+  .insert(companies)
+  .values({
+    name: "Stephen8n",
+    description:
+      "stephen8n.com — Stephen Cummins's personal platform of AI-powered indie apps: Bookr (bookshelf scanner), Leaflet Tracker, MaceStyle (document compliance), SteVibe (vibe coding), and Paperxlip.",
+    status: "active",
+    budgetMonthlyCents: 25000,
+  })
+  .returning();
+
+// Founder
+const [s8nStephen] = await db
+  .insert(agents)
+  .values({
+    companyId: s8n!.id,
+    name: "Stephen",
+    role: "ceo",
+    title: "Founder",
+    icon: "crown",
+    status: "idle",
+    adapterType: "claude_local",
+    adapterConfig: { model: "claude-opus-4-6" },
+    budgetMonthlyCents: 8000,
+    permissions: { canCreateAgents: true },
+    capabilities:
+      "Product vision, app portfolio strategy, prioritisation, launch planning, user feedback triage",
+  })
+  .returning();
+
+// Full-Stack Engineer
+const [fullstack] = await db
+  .insert(agents)
+  .values({
+    companyId: s8n!.id,
+    name: "FullStack",
+    role: "engineer",
+    title: "Full-Stack Engineer",
+    icon: "code",
+    status: "idle",
+    reportsTo: s8nStephen!.id,
+    adapterType: "claude_local",
+    adapterConfig: { model: "claude-sonnet-4-6" },
+    budgetMonthlyCents: 6000,
+    capabilities:
+      "React, TypeScript, Tailwind, Node.js, Python, FastAPI, Cloudflare Workers, Docker, SQLite, PostgreSQL",
+  })
+  .returning();
+
+// AI & Integrations Engineer
+const [aiEng] = await db
+  .insert(agents)
+  .values({
+    companyId: s8n!.id,
+    name: "AIEngineer",
+    role: "engineer",
+    title: "AI & Integrations Engineer",
+    icon: "brain",
+    status: "idle",
+    reportsTo: s8nStephen!.id,
+    adapterType: "claude_local",
+    adapterConfig: { model: "claude-sonnet-4-6" },
+    budgetMonthlyCents: 5000,
+    capabilities:
+      "LLM integration (Claude, GPT-4o, Ollama), computer vision, RAG pipelines, Microsoft Graph API, Azure Functions, prompt engineering",
+  })
+  .returning();
+
+// Growth & SEO
+const [growth] = await db
+  .insert(agents)
+  .values({
+    companyId: s8n!.id,
+    name: "Growth",
+    role: "cmo",
+    title: "Growth & SEO",
+    icon: "rocket",
+    status: "idle",
+    reportsTo: s8nStephen!.id,
+    adapterType: "claude_local",
+    adapterConfig: { model: "claude-sonnet-4-6" },
+    budgetMonthlyCents: 3000,
+    capabilities:
+      "SEO optimisation, Google Search Console, sitemap generation, meta tags, structured data, content marketing, analytics, Google indexing",
+  })
+  .returning();
+
+// DevOps
+const [s8nDevops] = await db
+  .insert(agents)
+  .values({
+    companyId: s8n!.id,
+    name: "DevOps",
+    role: "devops",
+    title: "Infrastructure & Deployment",
+    icon: "cog",
+    status: "idle",
+    reportsTo: s8nStephen!.id,
+    adapterType: "claude_local",
+    adapterConfig: { model: "claude-sonnet-4-6" },
+    budgetMonthlyCents: 3000,
+    capabilities:
+      "Cloudflare Workers, Azure Functions, Docker, CI/CD, domain management, SSL, monitoring, cost optimisation",
+  })
+  .returning();
+
+// --- Stephen8n Goals ---
+const [s8nGoal] = await db
+  .insert(goals)
+  .values({
+    companyId: s8n!.id,
+    title: "App Portfolio Growth",
+    description:
+      "Build, ship, and grow stephen8n.com as a portfolio of useful AI-powered apps",
+    level: "company",
+    status: "active",
+    ownerAgentId: s8nStephen!.id,
+  })
+  .returning();
+
+await db.insert(goals).values([
+  {
+    companyId: s8n!.id,
+    parentId: s8nGoal!.id,
+    title: "Ship & Iterate Apps",
+    description:
+      "Feature development, bug fixes, improvements across Bookr, Leaflet Tracker, MaceStyle, SteVibe",
+    level: "team" as const,
+    status: "active" as const,
+    ownerAgentId: fullstack!.id,
+  },
+  {
+    companyId: s8n!.id,
+    parentId: s8nGoal!.id,
+    title: "AI Capabilities",
+    description:
+      "LLM integrations, vision features, RAG pipelines, prompt optimisation across the portfolio",
+    level: "team" as const,
+    status: "active" as const,
+    ownerAgentId: aiEng!.id,
+  },
+  {
+    companyId: s8n!.id,
+    parentId: s8nGoal!.id,
+    title: "Visibility & Growth",
+    description:
+      "Get indexed by Google, drive traffic, build audience for stephen8n.com and all apps",
+    level: "team" as const,
+    status: "active" as const,
+    ownerAgentId: growth!.id,
+  },
+  {
+    companyId: s8n!.id,
+    parentId: s8nGoal!.id,
+    title: "Infrastructure",
+    description:
+      "Deployment pipelines, hosting, monitoring, cost optimisation across Cloudflare/Azure/Docker",
+    level: "team" as const,
+    status: "active" as const,
+    ownerAgentId: s8nDevops!.id,
+  },
+]);
+
+// --- Stephen8n Projects ---
+const [bookrProject] = await db
+  .insert(projects)
+  .values({
+    companyId: s8n!.id,
+    goalId: s8nGoal!.id,
+    name: "Bookr (ShelfScan)",
+    description:
+      "AI-powered bookshelf cataloger — photo your shelf, get a searchable library. Python/FastAPI, GPT-4o/Ollama.",
+    status: "in_progress",
+    leadAgentId: fullstack!.id,
+  })
+  .returning();
+
+const [stevibeProject] = await db
+  .insert(projects)
+  .values({
+    companyId: s8n!.id,
+    goalId: s8nGoal!.id,
+    name: "SteVibe",
+    description:
+      "AI-powered web app generator on Cloudflare VibeSDK. React+TypeScript+Tailwind apps from natural language.",
+    status: "in_progress",
+    leadAgentId: fullstack!.id,
+  })
+  .returning();
+
+await db.insert(projects).values([
+  {
+    companyId: s8n!.id,
+    goalId: s8nGoal!.id,
+    name: "MaceStyle",
+    description:
+      "Automated document validation — enforces writing style guide on SharePoint docs via Claude AI. Python/Azure Functions.",
+    status: "in_progress",
+    leadAgentId: aiEng!.id,
+  },
+  {
+    companyId: s8n!.id,
+    goalId: s8nGoal!.id,
+    name: "Leaflet Tracker",
+    description:
+      "Location-based tracking app. JavaScript client/server.",
+    status: "in_progress",
+    leadAgentId: fullstack!.id,
+  },
+  {
+    companyId: s8n!.id,
+    goalId: s8nGoal!.id,
+    name: "stephen8n.com",
+    description:
+      "The platform site itself — landing page, app directory, SEO, analytics.",
+    status: "in_progress",
+    leadAgentId: growth!.id,
+  },
+]);
+
+// --- Stephen8n Starter Issues ---
+await db.insert(issues).values([
+  {
+    companyId: s8n!.id,
+    projectId: bookrProject!.id,
+    goalId: s8nGoal!.id,
+    title: "Get stephen8n.com indexed by Google",
+    description:
+      "stephen8n.com returns 403 to crawlers and is not indexed. Fix: ensure site is accessible to Googlebot, add sitemap.xml, submit to Google Search Console, add meta tags and structured data (JSON-LD), set up robots.txt.",
+    status: "todo",
+    priority: "critical",
+    assigneeAgentId: growth!.id,
+    createdByAgentId: s8nStephen!.id,
+  },
+  {
+    companyId: s8n!.id,
+    projectId: stevibeProject!.id,
+    goalId: s8nGoal!.id,
+    title: "Deploy SteVibe to production on Cloudflare Workers",
+    description:
+      "Set up production deployment for SteVibe (stevibe-prod repo). Configure Workers for Platforms, D1 database, R2 storage, AI Gateway. Domain: stevibe.stephen8n.com or similar.",
+    status: "todo",
+    priority: "high",
+    assigneeAgentId: s8nDevops!.id,
+    createdByAgentId: s8nStephen!.id,
+  },
+  {
+    companyId: s8n!.id,
+    projectId: bookrProject!.id,
+    goalId: s8nGoal!.id,
+    title: "Add Ollama local mode to Bookr for cost-free scanning",
+    description:
+      "Bookr supports GPT-4o but the Ollama/LLaVA backend needs testing and documentation. Ensure it works end-to-end for users who want free local inference.",
+    status: "todo",
+    priority: "medium",
+    assigneeAgentId: aiEng!.id,
+    createdByAgentId: s8nStephen!.id,
+  },
+  {
+    companyId: s8n!.id,
+    projectId: bookrProject!.id,
+    goalId: s8nGoal!.id,
+    title: "Create landing pages for each app on stephen8n.com",
+    description:
+      "Each app (Bookr, SteVibe, MaceStyle, Leaflet Tracker) needs its own landing page with: description, screenshots, tech stack, try-it link. Good for SEO and discoverability.",
+    status: "todo",
+    priority: "medium",
+    assigneeAgentId: growth!.id,
+    createdByAgentId: s8nStephen!.id,
+  },
+]);
+
+console.log(`\nSeed: Stephen8n team ready`);
+console.log(`  Company: ${s8n!.name} (${s8n!.id})`);
+console.log(`  Agents: 5 | Goals: 5 | Projects: 5 | Issues: 4`);
+
+console.log("\nSeed complete — both teams ready");
 process.exit(0);

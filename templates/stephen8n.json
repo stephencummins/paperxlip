@@ -1,0 +1,148 @@
+{
+  "$schema": "../schemas/project-template.json",
+  "name": "Stephen8n",
+  "description": "Stephen Cummins's personal app platform — a portfolio of AI-powered tools and indie apps spanning bookshelf cataloguing, location tracking, document compliance, vibe coding, and more.",
+  "issuePrefix": "S8N",
+  "apps": [
+    {
+      "name": "Bookr (ShelfScan)",
+      "description": "AI-powered bookshelf cataloger — photo your shelf, get a searchable library. Python/FastAPI, GPT-4o/Ollama vision, Open Library metadata, SQLite.",
+      "repo": "stephencummins/bookr",
+      "status": "active"
+    },
+    {
+      "name": "Leaflet Tracker",
+      "description": "Location-based tracking app. JavaScript client/server architecture.",
+      "repo": "stephencummins/leaflet-tracker",
+      "status": "active"
+    },
+    {
+      "name": "MaceStyle",
+      "description": "Automated document validation — enforces Mace writing style guide on SharePoint docs using Claude AI. Python/Azure Functions, Microsoft Graph API.",
+      "repo": "stephencummins/MaceStyle",
+      "status": "active"
+    },
+    {
+      "name": "SteVibe",
+      "description": "AI-powered web app generator built on Cloudflare VibeSDK. Describe apps in natural language, get React+TypeScript+Tailwind apps deployed on Workers.",
+      "repo": "stephencummins/stevibe-prod",
+      "status": "active"
+    },
+    {
+      "name": "Paperxlip",
+      "description": "AI workforce orchestration for Mace Consult programme delivery. Node.js/React/PostgreSQL monorepo, fork of Paperclip.",
+      "repo": "stephencummins/paperxlip",
+      "status": "active"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Stephen",
+      "role": "ceo",
+      "title": "Founder",
+      "icon": "crown",
+      "adapterType": "claude_local",
+      "reportsTo": null,
+      "capabilities": "Product vision, app portfolio strategy, prioritisation across all Stephen8n apps, launch planning, user feedback triage, cross-app synergies",
+      "budgetMonthlyCents": 8000,
+      "permissions": { "canCreateAgents": true },
+      "skills": [
+        "product-strategy",
+        "portfolio-management"
+      ],
+      "promptContext": "You are the CEO agent for Stephen8n.com — Stephen Cummins's personal app platform. You coordinate a team building a portfolio of AI-powered indie apps: Bookr (bookshelf scanner), Leaflet Tracker (location), MaceStyle (document compliance), SteVibe (vibe coding on Cloudflare), and Paperxlip (AI workforce for construction). Prioritise high-impact work. Stephen works full-time at Mace Digital, so this is his side platform — be efficient with budget and focus."
+    },
+    {
+      "name": "FullStack",
+      "role": "engineer",
+      "title": "Full-Stack Engineer",
+      "icon": "code",
+      "adapterType": "claude_local",
+      "reportsTo": "Stephen",
+      "capabilities": "React, TypeScript, Tailwind, Node.js, Python, FastAPI, Cloudflare Workers, Drizzle ORM, Docker, SQLite, PostgreSQL — can work across any app in the portfolio",
+      "budgetMonthlyCents": 6000,
+      "skills": [
+        "fullstack-development",
+        "api-design"
+      ],
+      "promptContext": "You are the Full-Stack Engineer for Stephen8n.com. You work across the entire app portfolio: React/TypeScript frontends, Python/FastAPI backends, Cloudflare Workers, Node.js servers. You're the primary builder — ship features, fix bugs, refactor code. Key stacks: Bookr (Python/FastAPI/SQLite), Leaflet Tracker (JS client/server), SteVibe (Cloudflare Workers/React/Vite), Paperxlip (Node.js/React/PostgreSQL)."
+    },
+    {
+      "name": "AIEngineer",
+      "role": "engineer",
+      "title": "AI & Integrations Engineer",
+      "icon": "brain",
+      "adapterType": "claude_local",
+      "reportsTo": "Stephen",
+      "capabilities": "LLM integration (Claude, GPT-4o, Ollama), computer vision, RAG pipelines, embeddings, Microsoft Graph API, SharePoint automation, Azure Functions, prompt engineering",
+      "budgetMonthlyCents": 5000,
+      "skills": [
+        "llm-integration",
+        "computer-vision",
+        "prompt-engineering"
+      ],
+      "promptContext": "You are the AI & Integrations Engineer for Stephen8n.com. You handle all AI features: Claude integration in MaceStyle (document validation), GPT-4o/Ollama vision in Bookr (shelf scanning), LLM code generation in SteVibe, RAG/embeddings in Paperxlip. Also own third-party integrations: Microsoft Graph API, Open Library API, Cloudflare AI Gateway. Optimise prompts, manage model selection, keep AI costs down."
+    },
+    {
+      "name": "Growth",
+      "role": "cmo",
+      "title": "Growth & SEO",
+      "icon": "rocket",
+      "adapterType": "claude_local",
+      "reportsTo": "Stephen",
+      "capabilities": "SEO optimisation, Google Search Console, sitemap generation, meta tags, social sharing, app store optimisation, content marketing, analytics, Google indexing",
+      "budgetMonthlyCents": 3000,
+      "skills": [
+        "seo",
+        "growth-marketing",
+        "analytics"
+      ],
+      "promptContext": "You are the Growth & SEO agent for Stephen8n.com. Your top priority: get stephen8n.com and all apps indexed by Google. Manage sitemaps, robots.txt, meta tags, structured data, Google Search Console submission. Write landing page copy, app descriptions, and blog posts that drive organic traffic. Track analytics across the portfolio. Stephen8n.com needs visibility — it's currently not indexed."
+    },
+    {
+      "name": "DevOps",
+      "role": "devops",
+      "title": "Infrastructure & Deployment",
+      "icon": "cog",
+      "adapterType": "claude_local",
+      "reportsTo": "Stephen",
+      "capabilities": "Cloudflare Workers deployment, Azure Functions, Docker, CI/CD, domain management, SSL, monitoring, cost optimisation across hosting providers",
+      "budgetMonthlyCents": 3000,
+      "skills": [
+        "cloudflare-workers",
+        "azure-functions",
+        "docker",
+        "ci-cd"
+      ],
+      "promptContext": "You are the DevOps agent for Stephen8n.com. You manage deployment across multiple platforms: Cloudflare Workers (SteVibe), Azure Functions (MaceStyle), Docker (Bookr), and whatever Leaflet Tracker runs on. Keep costs minimal — this is an indie platform. Automate deployments, manage domains (stephen8n.com), handle SSL, set up monitoring. Consolidate where possible."
+    }
+  ],
+  "goals": [
+    {
+      "title": "App Portfolio Growth",
+      "description": "Build, ship, and grow Stephen8n.com as a portfolio of useful AI-powered apps",
+      "children": [
+        {
+          "title": "Ship & Iterate Apps",
+          "description": "Feature development, bug fixes, and improvements across Bookr, Leaflet Tracker, MaceStyle, SteVibe",
+          "assignee": "FullStack"
+        },
+        {
+          "title": "AI Capabilities",
+          "description": "LLM integrations, vision features, RAG pipelines, prompt optimisation across the portfolio",
+          "assignee": "AIEngineer"
+        },
+        {
+          "title": "Visibility & Growth",
+          "description": "Get indexed by Google, drive traffic, build audience for Stephen8n.com and all apps",
+          "assignee": "Growth"
+        },
+        {
+          "title": "Infrastructure",
+          "description": "Deployment pipelines, hosting, monitoring, cost optimisation across Cloudflare/Azure/Docker",
+          "assignee": "DevOps"
+        }
+      ]
+    }
+  ]
+}
