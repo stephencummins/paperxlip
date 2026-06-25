@@ -230,6 +230,7 @@ export async function createApp(
   api.use(maceRoutes(db));
   api.use("/templates", templateRoutes(db));
   app.use("/api", api);
+  api.use(docsRoutes());
   app.use("/api", (_req, res) => {
     res.status(404).json({ error: "API route not found" });
   });
@@ -237,8 +238,6 @@ export async function createApp(
     localPluginDir: opts.localPluginDir ?? DEFAULT_LOCAL_PLUGIN_DIR,
   }));
 
-  // Serve docs viewer at /docs
-  app.use(docsRoutes());
 
   // Serve Mace Knowledge UI at /knowledge/
   const __dirname = path.dirname(fileURLToPath(import.meta.url));

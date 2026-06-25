@@ -31,7 +31,7 @@ export const financeEvents = pgTable(
     quantity: integer("quantity"),
     unit: text("unit"),
     amountCents: integer("amount_cents").notNull(),
-    currency: text("currency").notNull().default("USD"),
+    currency: text("currency").notNull().default("GBP"),
     estimated: boolean("estimated").notNull().default(false),
     externalInvoiceId: text("external_invoice_id"),
     metadataJson: jsonb("metadata_json").$type<Record<string, unknown> | null>(),

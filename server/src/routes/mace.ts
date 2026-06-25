@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type { Db } from "@paperclipai/db";
-import { VectorStore } from "../services/mace-store.js";
+import { VectorStore } from "@paperxlip/mace-context";
 
 let store: VectorStore | null = null;
 

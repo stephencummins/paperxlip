@@ -4,8 +4,8 @@ AI workforce orchestration for construction programme management. Built by **Mac
 
 ## Context
 
-- **Mace Consult** became a standalone company on 5 March 2026 (Goldman Sachs Alternatives majority stake). ~$1B revenue, 5,500 staff across six continents. Programme/project management, strategic advisory, cost management.
-- **Mace Digital** is the team within Mace Consult that builds digital tools for programme delivery — PMO, data analytics, process automation, Power BI reporting.
+- **Mace Consult** became a standalone company on 5 March 2026 (Goldman Sachs Alternatives majority stake), separating from **Mace Construct** (which retained the contracting and construction delivery business). ~£800M revenue, 5,500 staff across six continents. Programme/project management, strategic advisory, cost management.
+- **Mace Digital** is the team within Mace Consult that builds digital tools for programme delivery — PMO, data analytics, process automation, Power BI reporting. As a standalone consultancy, Mace Consult now operates independently of Mace Construct's balance sheet, giving Mace Digital direct runway to develop and commercialise its AI platform.
 - **Paperxlip** is Mace Digital's AI workforce platform. It orchestrates AI agents across Mace Consult's project portfolio, with a shared knowledge layer that synthesises across every project.
 
 ## Vision

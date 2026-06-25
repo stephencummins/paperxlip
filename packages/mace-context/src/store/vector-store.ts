@@ -70,14 +70,14 @@ export class VectorStore {
     // Insert chunks
     for (let i = 0; i < chunks.length; i++) {
       await pool.query(
-        `INSERT INTO mace_chunks (document_id, company_id, content, chunk_index, embedding_json, metadata)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
+        `INSERT INTO mace_chunks (document_id, company_id, content, chunk_index, embedding, metadata)
+         VALUES ($1, $2, $3, $4, $5::vector, $6)`,
         [
           documentId,
           doc.companyId,
           chunks[i],
           i,
-          JSON.stringify(embeddings[i]),
+          `[${embeddings[i].join(",")}]`,
           JSON.stringify({}),
         ],
       );
@@ -103,13 +103,13 @@ export class VectorStore {
     // Fetch chunks with their embeddings
     let sql = `
       SELECT mc.id, mc.document_id, mc.company_id, mc.content, mc.chunk_index,
-             mc.embedding_json, mc.metadata,
+             mc.embedding::text AS embedding_json, mc.metadata,
              md.title AS doc_title, md.source_url, md.source_type, md.mime_type,
              md.content AS doc_content, md.metadata AS doc_metadata,
              md.ingested_at, md.updated_at
       FROM mace_chunks mc
       JOIN mace_documents md ON mc.document_id = md.id
-      WHERE mc.embedding_json IS NOT NULL
+      WHERE mc.embedding IS NOT NULL
     `;
     const params: any[] = [];
     let paramIdx = 1;
@@ -125,10 +125,14 @@ export class VectorStore {
 
     const result = await pool.query(sql, params);
 
-    // Compute cosine similarity in JS
+    // Use pgvector cosine distance for ranking
     const scored = result.rows
       .map((row: any) => {
-        const chunkEmbedding: number[] = JSON.parse(row.embedding_json);
+        // embedding_json is the vector cast to text; parse it back for score calc
+        const raw: string = row.embedding_json ?? "[]";
+        const chunkEmbedding: number[] = raw.startsWith("[")
+          ? raw.slice(1, -1).split(",").map(Number)
+          : JSON.parse(raw);
         const score = this.cosineSimilarity(queryEmbedding, chunkEmbedding);
         return { row, score };
       })

@@ -20,8 +20,10 @@ import { Input } from "@/components/ui/input";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
-import { CircleDot, Plus, Filter, ArrowUpDown, Layers, Check, X, ChevronRight, List, Columns3, User, Search } from "lucide-react";
+import { CircleDot, Plus, Filter, ArrowUpDown, Layers, Check, X, ChevronRight, List, Columns3, User, Search, LayoutGrid, Zap } from "lucide-react";
 import { KanbanBoard } from "./KanbanBoard";
+import { SwimlaneBoard } from "./SwimlaneBoard";
+import { AgileBoard } from "./AgileBoard";
 import type { Issue } from "@paperclipai/shared";
 
 /* ── Helpers ── */
@@ -44,7 +46,7 @@ export type IssueViewState = {
   sortField: "status" | "priority" | "title" | "created" | "updated";
   sortDir: "asc" | "desc";
   groupBy: "status" | "priority" | "assignee" | "none";
-  viewMode: "list" | "board";
+  viewMode: "list" | "board" | "swimlane" | "agile";
   collapsedGroups: string[];
 };
 
@@ -357,6 +359,20 @@ export function IssuesList({
             >
               <Columns3 className="h-3.5 w-3.5" />
             </button>
+            <button
+              className={`p-1.5 transition-colors ${viewState.viewMode === "swimlane" ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              onClick={() => updateView({ viewMode: "swimlane" })}
+              title="Swimlane view"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+            <button
+              className={`p-1.5 transition-colors ${viewState.viewMode === "agile" ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              onClick={() => updateView({ viewMode: "agile" })}
+              title="Agile / Sprint view"
+            >
+              <Zap className="h-3.5 w-3.5" />
+            </button>
           </div>
 
           {/* Filter */}
@@ -622,6 +638,21 @@ export function IssuesList({
 
       {viewState.viewMode === "board" ? (
         <KanbanBoard
+          issues={filtered}
+          agents={agents}
+          liveIssueIds={liveIssueIds}
+          onUpdateIssue={onUpdateIssue}
+        />
+      ) : viewState.viewMode === "swimlane" ? (
+        <SwimlaneBoard
+          issues={filtered}
+          projects={projects}
+          agents={agents}
+          liveIssueIds={liveIssueIds}
+          onUpdateIssue={onUpdateIssue}
+        />
+      ) : viewState.viewMode === "agile" ? (
+        <AgileBoard
           issues={filtered}
           agents={agents}
           liveIssueIds={liveIssueIds}

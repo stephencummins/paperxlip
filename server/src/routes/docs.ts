@@ -10,7 +10,7 @@ export function docsRoutes() {
   const router = Router();
 
   // List available docs
-  router.get("/api/docs", async (_req, res) => {
+  router.get("/docs", async (_req, res) => {
     try {
       const entries = await fs.readdir(DOCS_DIR);
       const docs = entries
@@ -36,7 +36,7 @@ export function docsRoutes() {
   });
 
   // Get single doc content
-  router.get("/api/docs/:docId", async (req, res) => {
+  router.get("/docs/:docId", async (req, res) => {
     const docId = req.params.docId;
     if (docId.includes("..") || docId.includes("/")) {
       res.status(400).json({ error: "Invalid doc ID" });

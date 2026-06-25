@@ -1,0 +1,214 @@
+{
+  "$schema": "../schemas/project-template.json",
+  "name": "Mace Consult — Demo",
+  "description": "Demo workspace showcasing Paperxlip's AI workforce capabilities for programme management. Pre-populated with realistic Mace Consult issues across multiple projects and agents.",
+  "client": "Demo — Mace Consult (standalone since March 2026)",
+  "issuePrefix": "DEMO",
+  "contractType": "NEC4",
+  "regulatoryFramework": ["NHS", "RIBA", "CDM", "Building Safety Act", "ISO 19650"],
+  "agents": [
+    {
+      "name": "Digital Director",
+      "role": "programme_director",
+      "title": "Director of Digital Delivery",
+      "icon": "crown",
+      "adapterType": "claude_local",
+      "reportsTo": null,
+      "budgetMonthlyCents": 8000,
+      "capabilities": "Oversee all AI operations, produce executive summaries, coordinate agents, escalate to SRO, track Goldman Sachs KPIs",
+      "skills": ["programme-reporting", "stakeholder-comms", "executive-summarisation", "cross-project-synthesis"],
+      "promptContext": "You are the Digital Director for Mace Consult's AI workforce. Coordinate Programme, Risk, Knowledge, Platform, and Insights agents across all projects."
+    },
+    {
+      "name": "Programme Agent",
+      "role": "programme_manager",
+      "title": "Programme Manager",
+      "icon": "target",
+      "adapterType": "claude_local",
+      "reportsTo": "Digital Director",
+      "budgetMonthlyCents": 8000,
+      "capabilities": "Monitor milestones, identify slippage, coordinate delivery agents, manage dependencies",
+      "skills": ["programme-reporting", "milestone-tracking", "dependency-management", "nec4-programme-clauses"],
+      "promptContext": "You are the Programme Agent for Mace Consult. Monitor milestones, identify slippage, and coordinate delivery."
+    },
+    {
+      "name": "Risk Agent",
+      "role": "risk_manager",
+      "title": "Risk & Opportunity Manager",
+      "icon": "radar",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "budgetMonthlyCents": 5000,
+      "capabilities": "Monitor risk registers, identify emerging risks, flag escalations, find precedent",
+      "skills": ["risk-assessment", "nec4-risk-clauses", "cross-project-precedent"],
+      "promptContext": "You are the Risk Agent for Mace Consult. Monitor risk registers and surface emerging risks."
+    },
+    {
+      "name": "Commercial Agent",
+      "role": "commercial_manager",
+      "title": "Commercial & Contracts Manager",
+      "icon": "gem",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "budgetMonthlyCents": 5000,
+      "capabilities": "Track NEC4 compensation events, draft commercial responses, monitor contract sum",
+      "skills": ["nec4-contracts", "variation-tracking", "compensation-events", "early-warning-notices"],
+      "promptContext": "You are the Commercial Agent for Mace Consult. Track compensation events and draft NEC4 responses."
+    },
+    {
+      "name": "Compliance Agent",
+      "role": "compliance_officer",
+      "title": "Regulatory Compliance Officer",
+      "icon": "shield",
+      "adapterType": "claude_local",
+      "reportsTo": "Programme Agent",
+      "budgetMonthlyCents": 3000,
+      "capabilities": "RIBA stage gates, CDM, Building Safety Act, ISO 19650 audit",
+      "skills": ["riba-stages", "cdm-compliance", "building-safety-act", "iso-19650-compliance"],
+      "promptContext": "You are the Compliance Agent for Mace Consult. Audit deliverables against RIBA, CDM, BSA, and ISO 19650."
+    },
+    {
+      "name": "Knowledge Agent",
+      "role": "knowledge_manager",
+      "title": "Knowledge & Document Manager",
+      "icon": "database",
+      "adapterType": "claude_local",
+      "reportsTo": "Digital Director",
+      "budgetMonthlyCents": 4000,
+      "capabilities": "Ingest SharePoint/Dataverse documents, maintain knowledge index, answer agent queries with citations",
+      "skills": ["document-ingestion", "knowledge-indexing", "cross-project-search", "lessons-learned"],
+      "promptContext": "You are the Knowledge Agent — Mace Consult's institutional memory. Ingest, index, and surface knowledge across projects."
+    }
+  ],
+  "goals": [
+    {
+      "title": "Digital Delivery Excellence",
+      "description": "Deliver predictability, automation, and control across all Mace Consult projects",
+      "children": [
+        { "title": "Programme Delivery", "description": "Keep all programmes on track", "assignee": "Programme Agent" },
+        { "title": "Risk Synthesis", "description": "Proactively identify risks with cross-project precedent", "assignee": "Risk Agent" },
+        { "title": "Commercial Control", "description": "Track all NEC4 compensation events and variations", "assignee": "Commercial Agent" },
+        { "title": "Regulatory Compliance", "description": "Zero compliance gaps across RIBA, CDM, BSA, ISO 19650", "assignee": "Compliance Agent" },
+        { "title": "Institutional Knowledge", "description": "Complete, searchable, cross-project knowledge", "assignee": "Knowledge Agent" }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "NHP — New Hospital Programme",
+      "description": "NHS New Hospital Programme. Mace Consult acting as programme manager. Key workstreams: design management, procurement strategy, digital integration, stakeholder engagement.",
+      "leadAgent": "Programme Agent",
+      "targetDate": "2027-03-31"
+    },
+    {
+      "name": "MWCC Migration",
+      "description": "Mace Way Control Centre migration from legacy SharePoint to new Power Platform environment (CONSULT-MWCC-INTERNAL-01-DEV → UAT → PROD). Includes document validation via MaceStyle.",
+      "leadAgent": "Platform Agent",
+      "targetDate": "2026-09-30"
+    },
+    {
+      "name": "ISO 19650 Compliance Rollout",
+      "description": "Roll out ISO 19650 information management standards across all Mace Consult projects. Includes CDE setup, naming conventions, and staff training.",
+      "leadAgent": "Compliance Agent",
+      "targetDate": "2026-12-31"
+    }
+  ],
+  "issues": [
+    {
+      "title": "Review NHP RIBA Stage 2 deliverables against CDM requirements",
+      "status": "in_progress",
+      "priority": "high",
+      "assigneeAgent": "Compliance Agent",
+      "project": "NHP — New Hospital Programme",
+      "description": "RIBA Stage 2 design package received from architect. Compliance Agent to review against CDM 2015 regulations and Building Safety Act 2022 gateway requirements before client sign-off."
+    },
+    {
+      "title": "Raise Early Warning Notice — ground investigation delay",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Commercial Agent",
+      "project": "NHP — New Hospital Programme",
+      "description": "Ground investigation contractor has indicated 3-week delay due to equipment availability. NEC4 clause 16 early warning notice required. Commercial Agent to draft and issue within 24 hours."
+    },
+    {
+      "title": "Update risk register — contractor financial exposure (CE #047)",
+      "status": "in_review",
+      "priority": "high",
+      "assigneeAgent": "Risk Agent",
+      "project": "NHP — New Hospital Programme",
+      "description": "Compensation Event #047 (ground investigation delay) has an estimated £340,000 cost exposure. Risk register to be updated with revised likelihood and impact scoring."
+    },
+    {
+      "title": "Produce Week 24 programme report for client SRO",
+      "status": "done",
+      "priority": "medium",
+      "assigneeAgent": "Programme Agent",
+      "project": "NHP — New Hospital Programme",
+      "description": "Weekly programme summary with RAG status for each workstream. Distributed to NHS England SRO and Mace Consult leadership. Includes milestone tracker and critical path update."
+    },
+    {
+      "title": "Ingest updated NHP design register from SharePoint",
+      "status": "todo",
+      "priority": "medium",
+      "assigneeAgent": "Knowledge Agent",
+      "project": "NHP — New Hospital Programme",
+      "description": "New design documents uploaded to SharePoint (09 Design library). Knowledge Agent to ingest and index 23 new documents for cross-project search."
+    },
+    {
+      "title": "Validate MWCC document naming conventions against ISO 19650-2",
+      "status": "in_progress",
+      "priority": "medium",
+      "assigneeAgent": "Compliance Agent",
+      "project": "MWCC Migration",
+      "description": "MaceStyle validator flagged 47 documents with incorrect naming conventions in the MWCC UAT environment. Compliance Agent to review flagged documents and produce remediation plan."
+    },
+    {
+      "title": "Configure Dataverse security roles for MWCC PROD environment",
+      "status": "backlog",
+      "priority": "medium",
+      "assigneeAgent": "Digital Director",
+      "project": "MWCC Migration",
+      "description": "PROD environment (CONSULT-MWCC-INTERNAL-03-PROD) requires security role assignment for Anjaly Suresh, Adem Mehmet, and Stephen Cummins. Service account SACONSULTPPMWCC to be granted appropriate permissions."
+    },
+    {
+      "title": "Draft ISO 19650 training materials for NHP project team",
+      "status": "todo",
+      "priority": "low",
+      "assigneeAgent": "Knowledge Agent",
+      "project": "ISO 19650 Compliance Rollout",
+      "description": "60-person NHP project team requires ISO 19650 induction. Knowledge Agent to produce training deck and FAQ document drawing on existing knowledge base."
+    },
+    {
+      "title": "Audit NHP CDE document status codes — S1-S4 compliance check",
+      "status": "backlog",
+      "priority": "medium",
+      "assigneeAgent": "Compliance Agent",
+      "project": "ISO 19650 Compliance Rollout",
+      "description": "Quarterly audit of NHP SharePoint CDE. Check all documents in SHARED and PUBLISHED libraries have correct suitability codes (S1-S4, A, B, CR) and are not stale."
+    },
+    {
+      "title": "Synthesise risk precedent: ground conditions across Mace portfolio",
+      "status": "in_review",
+      "priority": "medium",
+      "assigneeAgent": "Risk Agent",
+      "project": "NHP — New Hospital Programme",
+      "description": "Query Mace Context knowledge base for ground condition risks on comparable projects. Produce precedent summary with mitigation strategies that have worked previously."
+    },
+    {
+      "title": "Compensation Event #047 — cost assessment submission",
+      "status": "blocked",
+      "priority": "high",
+      "assigneeAgent": "Commercial Agent",
+      "project": "NHP — New Hospital Programme",
+      "description": "CE #047 cost assessment blocked pending receipt of ground investigation contractor's quotation. Commercial Agent to chase quotation and escalate if not received by end of week."
+    },
+    {
+      "title": "Set up weekly automated programme digest",
+      "status": "backlog",
+      "priority": "low",
+      "assigneeAgent": "Programme Agent",
+      "project": "NHP — New Hospital Programme",
+      "description": "Configure n8n workflow to trigger Programme Agent heartbeat every Monday 07:00. Agent to produce and email programme digest to distribution list before 09:00 stand-up."
+    }
+  ]
+}

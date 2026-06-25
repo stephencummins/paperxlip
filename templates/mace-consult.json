@@ -1,8 +1,8 @@
 {
   "$schema": "../schemas/project-template.json",
   "name": "Mace Consult — Digital Workforce",
-  "description": "Mace Digital's AI workforce for programme delivery across the Mace Consult portfolio. Covers NHP, Power Platform development, document management, risk synthesis, and stakeholder reporting.",
-  "client": "Mace Consult (Goldman Sachs Alternatives)",
+  "description": "Mace Digital's AI workforce for programme delivery across the Mace Consult portfolio. Mace Consult operates as a standalone programme management and advisory business (separated from Mace Construct in March 2026). Covers NHP, Power Platform development, document management, risk synthesis, and stakeholder reporting.",
+  "client": "Mace Consult (standalone since March 2026; Goldman Sachs Alternatives majority stake)",
   "maceConsultRole": "Mace Digital — internal AI capability",
   "issuePrefix": "MACE",
   "contractType": "NEC4",

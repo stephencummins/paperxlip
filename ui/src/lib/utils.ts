@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCents(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
+  return `£${(cents / 100).toFixed(2)}`;
 }
 
 export function formatDate(date: Date | string): string {
