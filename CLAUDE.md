@@ -244,3 +244,4 @@ types are exported from `ProjectHealthPanel.tsx` so both surfaces stay consisten
 
 - GitHub push: use SSH (`origin` = `git@github.com:stephencummins/paperxlip.git`). Mini's `id_ed25519` key is registered on GitHub as "Mac Mini 2". HTTPS push is blocked because upstream merge commit `f449615d` touched workflow files (would need a PAT with `workflow` scope).
 - `@paperxlip/mace-context` must be in `server/package.json` dependencies — it won't resolve automatically from the monorepo with tsx
+- **CI**: the upstream `Release` workflow (npm canary/stable publish via `scripts/release.sh`) is **disabled** on the fork (`gh workflow disable "Release"`) — it fired on every master push and always failed at `publish_canary` (no npm-canary env, package names owned by upstream). Re-enable with `gh workflow enable "Release"` if ever needed. `Refresh Lockfile` still runs on master push and passes; `PR`/`E2E`/`Release Smoke` are PR- or manual-triggered.
