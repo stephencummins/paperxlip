@@ -73,24 +73,73 @@ function templateToManifest(
 
   const files: Record<string, string> = {};
 
-  // Company readme
-  const companyPath = "company.md";
+  // Company readme — must be COMPANY.md (uppercase) for portability importer
+  const companyPath = "COMPANY.md";
   const companyMd = buildCompanyMarkdown(raw);
   files[companyPath] = companyMd;
 
-  // Agent markdown files (instructions / prompt context)
+  // Agent markdown files — portability importer discovers agents/${slug}/AGENTS.md
+  const paperclipAgentsConfig: Record<string, unknown> = {};
   for (const a of agents) {
     const agentName = a.name as string;
     const slug = slugify(agentName);
-    const filePath = `agents/${slug}.md`;
-    files[filePath] = buildAgentMarkdown(a);
+    files[`agents/${slug}/AGENTS.md`] = buildAgentMarkdown(a);
+    paperclipAgentsConfig[slug] = {
+      role: (a.role as string) ?? "agent",
+      icon: (a.icon as string) ?? null,
+      capabilities: (a.capabilities as string) ?? null,
+      budgetMonthlyCents: (a.budgetMonthlyCents as number) ?? 3000,
+      adapter: { type: (a.adapterType as string) ?? "claude_local" },
+    };
   }
 
+  // Projects from template JSON — importer discovers projects/${slug}/PROJECT.md
+  const rawProjects = (raw.projects as Array<Record<string, unknown>>) ?? [];
+  const projectSlugByName = new Map<string, string>();
+  const paperclipProjectsConfig: Record<string, unknown> = {};
+  for (const p of rawProjects) {
+    const projectName = p.name as string;
+    const slug = slugify(projectName);
+    projectSlugByName.set(projectName, slug);
+    const leadAgent = p.leadAgent as string | undefined;
+    files[`projects/${slug}/PROJECT.md`] = buildProjectMarkdown(p);
+    paperclipProjectsConfig[slug] = {
+      leadAgentSlug: leadAgent ? slugify(leadAgent) : null,
+      targetDate: (p.targetDate as string) ?? null,
+      status: "active",
+    };
+  }
+
+  // Issues from template JSON — importer discovers issues/${slug}/TASK.md
+  const issuePrefix = (raw.issuePrefix as string) ?? "ISSUE";
+  const rawIssues = (raw.issues as Array<Record<string, unknown>>) ?? [];
+  const paperclipTasksConfig: Record<string, unknown> = {};
+  rawIssues.forEach((iss, idx) => {
+    const title = iss.title as string;
+    const slug = (slugify(title).slice(0, 50) + `-${idx + 1}`);
+    const identifier = `${issuePrefix}-${String(idx + 1).padStart(3, "0")}`;
+    const assigneeAgent = iss.assigneeAgent as string | undefined;
+    const projectName = iss.project as string | undefined;
+    const projectSlug = projectName ? (projectSlugByName.get(projectName) ?? slugify(projectName)) : null;
+    files[`issues/${slug}/TASK.md`] = buildIssueMarkdown(iss, projectSlug, assigneeAgent ? slugify(assigneeAgent) : null);
+    paperclipTasksConfig[slug] = {
+      identifier,
+      status: (iss.status as string) ?? "backlog",
+      priority: (iss.priority as string) ?? "medium",
+    };
+  });
+
+  // .paperclip.yaml — extension data for agents, projects, tasks
+  const paperclipYaml = buildPaperclipYaml({ agents: paperclipAgentsConfig, projects: paperclipProjectsConfig, tasks: paperclipTasksConfig });
+  files[".paperclip.yaml"] = paperclipYaml;
+
+  // The manifest passed here is informational; buildManifestFromPackageFiles
+  // rebuilds it from the file tree when importing.
   const manifest: CompanyPortabilityManifest = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     source: null,
-    includes: { company: true, agents: true, projects: false, issues: false, skills: false },
+    includes: { company: true, agents: true, projects: rawProjects.length > 0, issues: rawIssues.length > 0, skills: false },
     company: {
       path: companyPath,
       name,
@@ -111,7 +160,14 @@ function templateToManifest(
 
 function buildCompanyMarkdown(raw: Record<string, unknown>): string {
   const lines: string[] = [];
-  lines.push(`# ${raw.name}`);
+  const name = raw.name as string;
+  // Frontmatter required for portability importer to read name/description
+  lines.push("---");
+  lines.push(`name: "${name.replace(/"/g, '\\"')}"`);
+  if (raw.description) lines.push(`description: "${String(raw.description).replace(/"/g, '\\"')}"`);
+  lines.push("---");
+  lines.push("");
+  lines.push(`# ${name}`);
   lines.push("");
   if (raw.description) lines.push(raw.description as string);
   lines.push("");
@@ -151,25 +207,21 @@ function buildAgentMarkdown(agent: Record<string, unknown>): string {
   const lines: string[] = [];
   const name = agent.name as string;
   const title = agent.title as string | undefined;
+  const reportsTo = agent.reportsTo as string | undefined;
+  const skills = agent.skills as string[] | undefined;
 
   lines.push("---");
   lines.push(`name: ${name}`);
   if (title) lines.push(`title: ${title}`);
-  if (agent.role) lines.push(`role: ${agent.role}`);
-  if (agent.icon) lines.push(`icon: ${agent.icon}`);
-  if (agent.reportsTo) lines.push(`reportsTo: ${agent.reportsTo}`);
-  if (agent.budgetMonthlyCents) lines.push(`budgetMonthlyCents: ${agent.budgetMonthlyCents}`);
-  const skills = agent.skills as string[] | undefined;
+  if (reportsTo) lines.push(`reportsTo: "${slugify(reportsTo)}"`);
   if (skills?.length) lines.push(`skills: ${JSON.stringify(skills)}`);
   lines.push("---");
   lines.push("");
 
-  // Prompt context becomes the markdown body (the agent's instructions)
   if (agent.promptContext) {
     lines.push(agent.promptContext as string);
     lines.push("");
   }
-
   if (agent.capabilities) {
     lines.push("## Capabilities");
     lines.push("");
@@ -178,6 +230,63 @@ function buildAgentMarkdown(agent: Record<string, unknown>): string {
   }
 
   return lines.join("\n");
+}
+
+function buildProjectMarkdown(project: Record<string, unknown>): string {
+  const lines: string[] = [];
+  const name = project.name as string;
+  lines.push("---");
+  lines.push(`name: ${name}`);
+  if (project.description) lines.push(`description: "${String(project.description).replace(/"/g, '\\"')}"`);
+  lines.push("---");
+  lines.push("");
+  if (project.description) lines.push(project.description as string);
+  lines.push("");
+  return lines.join("\n");
+}
+
+function buildIssueMarkdown(issue: Record<string, unknown>, projectSlug: string | null, assigneeSlug: string | null): string {
+  const lines: string[] = [];
+  const title = issue.title as string;
+  lines.push("---");
+  lines.push(`title: ${title}`);
+  if (projectSlug) lines.push(`project: ${projectSlug}`);
+  if (assigneeSlug) lines.push(`assignee: ${assigneeSlug}`);
+  if (issue.status) lines.push(`status: ${issue.status}`);
+  if (issue.priority) lines.push(`priority: ${issue.priority}`);
+  lines.push("---");
+  lines.push("");
+  if (issue.description) lines.push(issue.description as string);
+  lines.push("");
+  return lines.join("\n");
+}
+
+function buildPaperclipYaml(config: { agents: Record<string, unknown>; projects: Record<string, unknown>; tasks: Record<string, unknown> }): string {
+  const lines: string[] = [];
+  const writeObj = (label: string, obj: Record<string, unknown>) => {
+    if (Object.keys(obj).length === 0) return;
+    lines.push(`${label}:`);
+    for (const [key, val] of Object.entries(obj)) {
+      lines.push(`  ${key}:`);
+      if (val && typeof val === "object") {
+        for (const [k, v] of Object.entries(val as Record<string, unknown>)) {
+          if (v === null || v === undefined) continue;
+          if (typeof v === "object") {
+            lines.push(`    ${k}:`);
+            for (const [k2, v2] of Object.entries(v as Record<string, unknown>)) {
+              if (v2 !== null && v2 !== undefined) lines.push(`      ${k2}: ${JSON.stringify(v2)}`);
+            }
+          } else {
+            lines.push(`    ${k}: ${JSON.stringify(v)}`);
+          }
+        }
+      }
+    }
+  };
+  writeObj("agents", config.agents);
+  writeObj("projects", config.projects);
+  writeObj("tasks", config.tasks);
+  return lines.join("\n") + "\n";
 }
 
 export function templateLibraryService() {

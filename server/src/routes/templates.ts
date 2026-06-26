@@ -45,6 +45,7 @@ export function templateRoutes(db: Db) {
         ? { mode: "existing_company", companyId: req.body.companyId }
         : { mode: "new_company", newCompanyName: companyName },
       agents: "all",
+      include: { company: true, agents: true, projects: true, issues: true, skills: false },
       collisionStrategy: req.body.collisionStrategy ?? "rename",
     });
 
@@ -73,6 +74,7 @@ export function templateRoutes(db: Db) {
           ? { mode: "existing_company", companyId: req.body.companyId }
           : { mode: "new_company", newCompanyName: companyName },
         agents: req.body.agents ?? "all",
+        include: { company: true, agents: true, projects: true, issues: true, skills: false },
         collisionStrategy: req.body.collisionStrategy ?? "rename",
       },
       actorInfo.actorId,
