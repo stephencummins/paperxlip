@@ -66,7 +66,11 @@ ui/               React dashboard
       KanbanBoard.tsx  Status-column kanban (existing)
       SwimlaneBoard.tsx  Project-row × status-column grid [NEW]
       AgileBoard.tsx   Sprint board + collapsible backlog/done [NEW]
+      ProjectHealthPanel.tsx  RAG project cards; exports computeProjectHealth() [NEW]
       BudgetPolicyCard.tsx  Shows budget in GBP
+    pages/
+      Dashboard.tsx    Agent/task ops view + embedded Programme Overview panel
+      Programme.tsx    Programme Manager portfolio cockpit (/programme) [NEW]
 cli/              CLI tooling
 packages/
   db/             Drizzle schema + migrations
@@ -193,6 +197,35 @@ Issues page supports four views toggled in `IssuesList.tsx`:
 | Swimlane | `SwimlaneBoard` | Rows = projects, columns = statuses |
 | Agile | `AgileBoard` | 4-column sprint + collapsible backlog/done |
 
+## Programme & Portfolio Views
+
+A Programme Manager / Digital Director overview of all projects, derived from **issue
+status** (not project.status, which the importer coerces to `backlog`).
+
+**RAG logic** lives in `ProjectHealthPanel.tsx → computeProjectHealth()` and is shared
+by both surfaces below:
+
+| RAG | Condition |
+|---|---|
+| **Red** (At risk) | any `blocked` issue, or target date passed with work incomplete |
+| **Green** (On track) | all done, or in-flight with ≥50% complete |
+| **Amber** (Watch) | partial progress, no blockers |
+| **Grey** (Not started) | no issues |
+
+Two surfaces:
+
+1. **Dashboard panel** — `<ProjectHealthPanel>` rendered in `Dashboard.tsx` below the
+   charts. Grid of RAG cards (progress bar, blocked/active/open/done counts, lead agent,
+   target date), sorted worst-first, with a summary chip row.
+2. **`/programme` page** — `Programme.tsx`, linked from the sidebar (Work › Programme,
+   Goal icon). Portfolio cockpit: RAG roll-up banner, 4 metric cards (on track / blocked /
+   in progress / milestones), the reused project-health grid (`showHeader={false}`), a
+   cross-portfolio **Needs attention** list (blocked + overdue-high + critical tasks), and
+   a **Milestone timeline** (projects by target date, overdue flagged red).
+
+`computeProjectHealth(project, issues)`, `RAG_META`, and the `Rag` / `ProjectHealth`
+types are exported from `ProjectHealthPanel.tsx` so both surfaces stay consistent.
+
 ## Key Concepts
 
 - **Agent** = AI worker with a role, budget, and position in the org chart
@@ -209,5 +242,5 @@ Issues page supports four views toggled in `IssuesList.tsx`:
 
 ## Known Issues
 
-- GitHub push blocked: upstream merge commit `f449615d` modified workflow files; pushing requires a PAT with `workflow` scope (Mini's OAuth token lacks it)
+- GitHub push: use SSH (`origin` = `git@github.com:stephencummins/paperxlip.git`). Mini's `id_ed25519` key is registered on GitHub as "Mac Mini 2". HTTPS push is blocked because upstream merge commit `f449615d` touched workflow files (would need a PAT with `workflow` scope).
 - `@paperxlip/mace-context` must be in `server/package.json` dependencies — it won't resolve automatically from the monorepo with tsx

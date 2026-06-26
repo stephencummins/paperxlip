@@ -21,6 +21,7 @@ import { timeAgo } from "../lib/timeAgo";
 import { cn, formatCents } from "../lib/utils";
 import { Bot, CircleDot, DollarSign, ShieldCheck, LayoutDashboard, PauseCircle } from "lucide-react";
 import { ActiveAgentsPanel } from "../components/ActiveAgentsPanel";
+import { ProjectHealthPanel } from "../components/ProjectHealthPanel";
 import { ChartCard, RunActivityChart, PriorityChart, IssueStatusChart, SuccessRateChart } from "../components/ActivityCharts";
 import { PageSkeleton } from "../components/PageSkeleton";
 import type { Agent, Issue } from "@paperclipai/shared";
@@ -297,6 +298,12 @@ export function Dashboard() {
               <SuccessRateChart runs={runs ?? []} />
             </ChartCard>
           </div>
+
+          <ProjectHealthPanel
+            projects={projects ?? []}
+            issues={issues ?? []}
+            agents={agents ?? []}
+          />
 
           <PluginSlotOutlet
             slotTypes={["dashboardWidget"]}
