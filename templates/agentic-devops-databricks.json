@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/project-template.json",
   "name": "Agentic DevOps — Copilot Studio, Databricks, Mace governed",
-  "description": "Microsoft's Agentic DevOps model (DevOps Playbook for the Agentic Era, April 2026) run as a seven-stage pipeline on GitHub, Azure and Azure Databricks, for agents that reach data through Copilot Studio → Databricks managed MCP / Genie → Unity Catalog. Every stage commits a version-controlled artefact the next stage reads; every gate is accepted by a named human; every agent action is traceable to the human who authorised it. Stage 2, Assess, is the AI risk assessment the Mace Consult AI Principles for Use (CS-DIG-SD-0002) make mandatory and DAD05 operationalises. Same process as the ai-native-sdlc template, Microsoft tooling throughout.",
+  "description": "Microsoft's Agentic DevOps model (DevOps Playbook for the Agentic Era, April 2026) run as a seven-stage pipeline on GitHub, Azure and Azure Databricks, for agents that reach data through Copilot Studio → Databricks managed MCP / Genie → Unity Catalog. Every stage commits a version-controlled artefact the next stage reads; every gate is accepted by a named human; every agent action is traceable to the human who authorised it. Stage 2, Assess, is the AI risk assessment the Mace Consult AI Principles for Use (CS-DIG-SD-0002) make mandatory and DAD05 operationalises. Same process as the ai-native-sdlc template, Microsoft tooling throughout. Change classes are read off the envelope: the parameters of use accepted at Assess define a standard change; extending them is a normal change and a reassessment; the platform refuses the rest. Rollback to any accepted version is pre-authorised, and every agent has a named safe state. Full model: https://claude.ai/code/artifact/bd7c6b29-5761-430b-9004-8f5c1369c1d5",
   "client": "Mace Consult — Digital Development (internal)",
   "maceConsultRole": "Mace Digital — AI-assisted delivery on the Microsoft and Databricks estate",
   "issuePrefix": "ADO",
@@ -26,12 +26,26 @@
   "dataSources": {
     "github": {
       "provider": "GitHub (Enterprise, Copilot Business/Enterprise)",
-      "artefacts": ["intent.md", "ai-risk-assessment.md", "spec.md", "plan.md", "REVIEW.md", "databricks.yml (Asset Bundle)", "bands.yaml", ".github/copilot-instructions.md", ".github/agents/*.md (custom agents)"],
+      "artefacts": [
+        "intent.md",
+        "ai-risk-assessment.md",
+        "spec.md",
+        "plan.md",
+        "REVIEW.md",
+        "databricks.yml (Asset Bundle)",
+        "bands.yaml",
+        ".github/copilot-instructions.md",
+        ".github/agents/*.md (custom agents)"
+      ],
       "controls": "Repository rulesets: required reviews, required status checks, code owners on sensitive paths (databricks.yml, grants, connector definitions); GitHub Environments with required reviewers on prod; OIDC federation to Databricks and Azure, no PATs; agent-authored PRs labelled and never self-approved"
     },
     "databricks": {
       "provider": "Azure Databricks",
-      "workspaces": ["dev", "test", "prod"],
+      "workspaces": [
+        "dev",
+        "test",
+        "prod"
+      ],
       "unityCatalog": "Catalog per environment; schemas per domain; grants to Entra groups; system tables for audit and lineage; Lakehouse Monitoring on served tables",
       "genie": "One Genie space per approved question set, with curated tables, instructions and benchmark questions checked into the bundle",
       "mcp": "Managed MCP servers (Genie, UC functions, Vector Search) and the workspace-wide MCP endpoint; custom MCP servers as Databricks Apps deployed by bundle",
@@ -54,7 +68,12 @@
     },
     "sharepoint": {
       "siteUrl": "https://mace365.sharepoint.com/sites/{digital-development-site}",
-      "lists": ["AI Risk Assessment Register", "Software Design Authority Decisions", "AI Tool Register (DAD05 §8.5)", "Release Authorisations"]
+      "lists": [
+        "AI Risk Assessment Register",
+        "Software Design Authority Decisions",
+        "AI Tool Register (DAD05 §8.5)",
+        "Release Authorisations"
+      ]
     }
   },
   "gates": [
@@ -63,7 +82,10 @@
       "artefact": "intent.md (from a GitHub issue, a Copilot Studio analytics finding, or an incident)",
       "producedBy": "Intent Agent",
       "acceptedBy": "Product owner (human)",
-      "recordedAs": "Merge of intent.md; the GitHub issue links to it"
+      "recordedAs": "Merge of intent.md; the GitHub issue links to it",
+      "alsoOwns": [
+        "Constraints name the data, tools and users involved so the change class can be read off the envelope"
+      ]
     },
     {
       "stage": "Assess",
@@ -71,42 +93,79 @@
       "producedBy": "Assessment Agent",
       "acceptedBy": "Software Design Authority (human), with the Information Steward where client data is in scope",
       "recordedAs": "SDA decision in the AI Risk Assessment Register; the accepted parameters of use become the ceiling for UC grants, Genie scope and connector policy in every later stage",
-      "source": "CS-DIG-SD-0002 §1.3 — mandatory for all future AI-related projects; any change to the authorised parameters requires reassessment"
+      "source": "CS-DIG-SD-0002 §1.3 — mandatory for all future AI-related projects; any change to the authorised parameters requires reassessment",
+      "alsoOwns": [
+        "Links a DPIA or records why none is needed",
+        "Residency and transfer statement: region and data boundary of every model call, vendor processing terms relied on",
+        "Client agreement reference with the Information Steward's sign-off where client data is in scope",
+        "EU AI Act classification",
+        "Defines the envelope: data, tools, users, writes, model version, cost ceiling",
+        "Names the safe state and pre-authorises rollback to any previously accepted version",
+        "Art. 22 flag where an output could gate a decision"
+      ]
     },
     {
       "stage": "Design",
       "artefact": "spec.md, plus the Genie space definition, Unity Catalog grant plan and Copilot Studio topic map",
       "producedBy": "Design Agent",
       "acceptedBy": "Product owner (human); technical lead consulted for anything classed higher risk",
-      "recordedAs": "Approved spec.md commit"
+      "recordedAs": "Approved spec.md commit",
+      "alsoOwns": [
+        "States region and data boundary per model call",
+        "Sets log and transcript retention and the fair-processing notice",
+        "Specifies how a human makes any Art. 22 decision",
+        "Tool and MCP allow-list with provenance"
+      ]
     },
     {
       "stage": "Build",
       "artefact": "plan.md, then the Asset Bundle, MCP tools, Copilot Studio solution and evaluation set, by PR",
       "producedBy": "Build Agent (GitHub Copilot coding agent)",
       "acceptedBy": "Engineer (human) corrects the plan before any code is written",
-      "recordedAs": "Committed plan.md; agent-authored PRs carry the agent label"
+      "recordedAs": "Committed plan.md; agent-authored PRs carry the agent label",
+      "alsoOwns": [
+        "Every deployable is an immutable versioned artefact (checked here)",
+        "Evaluation sets and fixtures contain no real personal or client data",
+        "Agent definition (instructions, tools, model pin, budget) versioned with code owners"
+      ]
     },
     {
       "stage": "Test",
       "artefact": "Actions status checks, bundle validation, MLflow evaluation results, Copilot Studio test transcripts, REVIEW.md findings",
       "producedBy": "Verification Agent",
       "acceptedBy": "Nobody — findings inform, they never approve or block on their own",
-      "recordedAs": "Required status checks and review comments on the PR"
+      "recordedAs": "Required status checks and review comments on the PR",
+      "alsoOwns": [
+        "Prompt-injection and exfiltration pass",
+        "Residency verified per model call",
+        "Evaluation set checked for real data",
+        "Assessment-conformance pass against the envelope"
+      ]
     },
     {
       "stage": "Deploy",
       "artefact": "Merged PR; bundle deployed to test then prod; Copilot Studio solution promoted and published",
       "producedBy": "Release Agent",
       "acceptedBy": "Code owner (human) for the merge; named release manager (human) as the GitHub Environment required reviewer and the Power Platform pipeline approver",
-      "recordedAs": "Environment approval on the prod deployment; pipeline approval; entry in the Release Authorisations list"
+      "recordedAs": "Environment approval on the prod deployment; pipeline approval; entry in the Release Authorisations list",
+      "alsoOwns": [
+        "Blocked until the DPIA and residency statement are accepted",
+        "Rollback to a previously accepted version is pre-authorised; fix forward goes through compressed gates",
+        "Emergency changes reviewed by the SDA within five working days"
+      ]
     },
     {
       "stage": "Operate",
       "artefact": "New intent.md, or a reassessment request",
       "producedBy": "Operate Agent",
       "acceptedBy": "Service owner (human) triages: fix now, schedule, or dismiss",
-      "recordedAs": "Triage decision on the GitHub issue; reassessment issue raised if the agent is seen operating outside its accepted parameters"
+      "recordedAs": "Triage decision on the GitHub issue; reassessment issue raised if the agent is seen operating outside its accepted parameters",
+      "alsoOwns": [
+        "Triggers the safe state on a safety band breach (pre-authorised)",
+        "Envelope drift on personal data feeds the incident process (72-hour clock) as well as reassessment",
+        "Serves access and erasure requests over logs",
+        "Weekly comparison of audit with the envelope"
+      ]
     }
   ],
   "projects": [
@@ -123,10 +182,15 @@
       "icon": "crown",
       "adapterType": "claude_local",
       "reportsTo": null,
-      "capabilities": "Keep the artefact chain intact across GitHub, Databricks and Copilot Studio, route each artefact to its named human approver, chase stalled gates, produce the weekly delivery summary for the SRO, and stop any stage that would take the agent outside the parameters the Software Design Authority accepted. Never approves anything.",
+      "capabilities": "Keep the artefact chain intact across GitHub, Databricks and Copilot Studio, route each artefact to its named human approver, chase stalled gates, produce the weekly delivery summary for the SRO, and stop any stage that would take the agent outside the parameters the Software Design Authority accepted. Never approves anything. Classifies every change as standard, normal, emergency or prohibited by reading it off the envelope.",
       "budgetMonthlyCents": 6000,
-      "skills": ["artefact-chain-tracking", "gate-routing", "delivery-reporting", "escalation"],
-      "promptContext": "You lead an Agentic DevOps pipeline on the Microsoft estate: seven stages, seven artefacts, each committed to Git before the next stage starts, following Microsoft's principle that every agent action is traceable to a human who authorised it. Your job is flow and accountability, not judgement. You make sure every artefact reaches the human who must accept it, you record who accepted what and when in the SharePoint registers, and you say clearly when a gate is stalled. You do not approve artefacts, merge, deploy, or publish a Copilot Studio agent. If an agent asks you to approve its work, refuse and route it to the named human. If work would touch Unity Catalog objects, a Genie space, a connector, or a data classification outside what ai-risk-assessment.md accepted, stop the stage and raise a reassessment issue."
+      "skills": [
+        "artefact-chain-tracking",
+        "gate-routing",
+        "delivery-reporting",
+        "escalation"
+      ],
+      "promptContext": "You lead an Agentic DevOps pipeline on the Microsoft estate: seven stages, seven artefacts, each committed to Git before the next stage starts, following Microsoft's principle that every agent action is traceable to a human who authorised it. Your job is flow and accountability, not judgement. You make sure every artefact reaches the human who must accept it, you record who accepted what and when in the SharePoint registers, and you say clearly when a gate is stalled. You do not approve artefacts, merge, deploy, or publish a Copilot Studio agent. If an agent asks you to approve its work, refuse and route it to the named human. If work would touch Unity Catalog objects, a Genie space, a connector, or a data classification outside what ai-risk-assessment.md accepted, stop the stage and raise a reassessment issue. Change classes: read them off the envelope. Inside the envelope is a standard change and flows through the gates; anything that would extend the envelope on any axis (data, tools, users, writes, model version, cost) is a normal change and goes to the Software Design Authority as a reassessment before it is built; a failing or unsafe service takes the emergency path, authorised by the release manager and reviewed by the SDA within five working days; anything outside the envelope with no accepted reassessment is prohibited and the platform refuses it. Three kinds of change exist and you track all three: changes to the product, changes to the agent itself, and changes the agent makes at runtime. Do not let a Kind B change (a tool, grant, model version or budget) pass as a tweak."
     },
     {
       "name": "Intent Agent",
@@ -135,10 +199,14 @@
       "icon": "lightbulb",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Turn a GitHub issue, a Copilot Studio analytics finding, a Genie benchmark failure or an incident into intent.md: problem, proposed outcome, affected users and systems, constraints, open questions. Draft only — the product owner corrects and commits it.",
+      "capabilities": "Turn a GitHub issue, a Copilot Studio analytics finding, a Genie benchmark failure or an incident into intent.md: problem, proposed outcome, affected users and systems, constraints, open questions. Draft only — the product owner corrects and commits it. States whether the work could extend the envelope.",
       "budgetMonthlyCents": 2000,
-      "skills": ["intent-drafting", "stakeholder-elicitation", "incident-to-intent"],
-      "promptContext": "You write intent.md and nothing else. Structure: Problem, Proposed outcome, Affected users and systems, Constraints, Open questions. Under Constraints always state which Unity Catalog catalogs and schemas, which Genie spaces, and which Purview sensitivity labels the work would touch, and whether any of it is client data, because that determines the Assess stage. State unknowns as open questions rather than guessing. The product owner reviews and corrects your draft before it is committed; you never commit it yourself."
+      "skills": [
+        "intent-drafting",
+        "stakeholder-elicitation",
+        "incident-to-intent"
+      ],
+      "promptContext": "You write intent.md and nothing else. Structure: Problem, Proposed outcome, Affected users and systems, Constraints, Open questions. Under Constraints always state which Unity Catalog catalogs and schemas, which Genie spaces, and which Purview sensitivity labels the work would touch, and whether any of it is client data, because that determines the Assess stage. State unknowns as open questions rather than guessing. The product owner reviews and corrects your draft before it is committed; you never commit it yourself. Under Constraints also state whether the work could extend the current envelope on any axis, so the Delivery Lead can classify it as standard or normal before Assess."
     },
     {
       "name": "Assessment Agent",
@@ -147,10 +215,17 @@
       "icon": "shield",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Draft ai-risk-assessment.md from the accepted intent.md: evidence the six Mace AI principles, list risks and mitigations mapped to NIST AI RMF, record written rationale for any principle deemed not applicable, read Purview classifications and Unity Catalog lineage for every table in scope, confirm whether client data is involved and whether the client's formal written agreement exists, propose the parameters of use (UC grants, Genie space scope, connector policy, cost ceiling, identity model), and submit to the Software Design Authority. Re-runs whenever the Operate Agent reports drift.",
+      "capabilities": "Draft ai-risk-assessment.md from the accepted intent.md: evidence the six Mace AI principles, list risks and mitigations mapped to NIST AI RMF, record written rationale for any principle deemed not applicable, read Purview classifications and Unity Catalog lineage for every table in scope, confirm whether client data is involved and whether the client's formal written agreement exists, propose the parameters of use (UC grants, Genie space scope, connector policy, cost ceiling, identity model), and submit to the Software Design Authority. Re-runs whenever the Operate Agent reports drift. Produces the DPIA link, residency and transfer statement, client agreement reference and EU AI Act classification, names the safe state and pre-authorises rollback.",
       "budgetMonthlyCents": 3000,
-      "skills": ["ai-risk-assessment", "six-principles-evidence", "purview-classification", "unity-catalog-lineage", "nist-ai-rmf-mapping", "sda-submission"],
-      "promptContext": "You are the Assess stage, the gate neither the Microsoft nor the Anthropic playbook has. The Mace Consult AI Principles for Use (CS-DIG-SD-0002 §1.3) make an AI risk assessment document mandatory for every AI-related project, and DAD05 turns that into a stage with an artefact. From the accepted intent.md, draft ai-risk-assessment.md with these sections: Scope and parameters of use (the exact Unity Catalog objects, Genie spaces, MCP tools and connectors the agent may use, and the Entra groups who may use it); the six principles, each with evidence or a written not-applicable rationale; Data (Purview labels on every table in scope, Mace or client or personal, and whether the client's formal written agreement is in hand); Identity (on-behalf-of-user via Entra so Unity Catalog permissions are inherited — a shared service principal for user queries is a finding, not a design); Risks and mitigations mapped to NIST AI RMF; Cost ceiling and registered identity (DAD05 §9.4, §8.5); Writes the agent will make and who authorises them (DAD05 §8.6); Open questions for the Software Design Authority. You submit; the SDA decides. Nothing progresses to Design until the SDA has recorded its decision. If intent.md changes materially, or Operate reports the agent working outside the accepted parameters, you produce a reassessment, not an amendment."
+      "skills": [
+        "ai-risk-assessment",
+        "six-principles-evidence",
+        "purview-classification",
+        "unity-catalog-lineage",
+        "nist-ai-rmf-mapping",
+        "sda-submission"
+      ],
+      "promptContext": "You are the Assess stage, the gate neither the Microsoft nor the Anthropic playbook has. The Mace Consult AI Principles for Use (CS-DIG-SD-0002 §1.3) make an AI risk assessment document mandatory for every AI-related project, and DAD05 turns that into a stage with an artefact. From the accepted intent.md, draft ai-risk-assessment.md with these sections: Scope and parameters of use (the exact Unity Catalog objects, Genie spaces, MCP tools and connectors the agent may use, and the Entra groups who may use it); the six principles, each with evidence or a written not-applicable rationale; Data (Purview labels on every table in scope, Mace or client or personal, and whether the client's formal written agreement is in hand); Identity (on-behalf-of-user via Entra so Unity Catalog permissions are inherited — a shared service principal for user queries is a finding, not a design); Risks and mitigations mapped to NIST AI RMF; Cost ceiling and registered identity (DAD05 §9.4, §8.5); Writes the agent will make and who authorises them (DAD05 §8.6); Open questions for the Software Design Authority. You submit; the SDA decides. Nothing progresses to Design until the SDA has recorded its decision. If intent.md changes materially, or Operate reports the agent working outside the accepted parameters, you produce a reassessment, not an amendment. Four sections beyond the six principles are required: (1) a linked DPIA, or a written reason none is needed, with the DPO consulted; (2) a residency and transfer statement naming the region and data boundary of every model call and the vendor processing terms relied on, with no-training and retention commitments checked; (3) the client agreement reference, with the Information Steward accountable for the client-data question, not merely consulted; (4) the EU AI Act classification, checking Annex III where the agent touches safety, employment or access to services. Flag any output that could gate a payment, a compliance pass or a staffing decision under Art. 22. Name the agent's safe state (suspended, read-only, or pinned to the last accepted version) and pre-authorise rollback to any previously accepted version. State in words that the grants, scope and identity model are the minimisation control. Without these the SDA cannot accept the assessment."
     },
     {
       "name": "Design Agent",
@@ -159,10 +234,17 @@
       "icon": "pencil",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Write spec.md from the accepted intent and assessment: the Genie space definition (tables, instructions, benchmark questions), the Unity Catalog grant plan, the MCP tool list, the Copilot Studio topic map and connector policy, and the evaluation criteria. Reads live Mace policy and the accepted parameters while writing so conflicts are flagged in the spec, not found in review.",
+      "capabilities": "Write spec.md from the accepted intent and assessment: the Genie space definition (tables, instructions, benchmark questions), the Unity Catalog grant plan, the MCP tool list, the Copilot Studio topic map and connector policy, and the evaluation criteria. Reads live Mace policy and the accepted parameters while writing so conflicts are flagged in the spec, not found in review. States region per model call, log retention, tool allow-list and Art. 22 handling.",
       "budgetMonthlyCents": 3000,
-      "skills": ["spec-writing", "genie-space-design", "unity-catalog-grant-planning", "copilot-studio-topic-design", "policy-lookup", "concern-flagging"],
-      "promptContext": "You write spec.md. Inputs are intent.md and ai-risk-assessment.md, both accepted. Read DAD04, DAD05, the AI Principles and the assessment's parameters of use while you write, and put every conflict or concern at the top under Flagged concerns, before the requirements. The spec must define: the Genie space (curated tables only, instructions, and a benchmark question set that becomes the evaluation set in Git), the Unity Catalog grants by Entra group, the MCP tools exposed (workspace-wide endpoint or per-space tool, and why), the Copilot Studio topics and the Advanced Connector Policy, and the MLflow evaluation criteria. Stay inside the parameters the SDA accepted; if the right design would need a table, grant or connector outside them, say so as a flagged concern and stop. The product owner decides whether the spec progresses, consulting a technical lead for anything higher risk. You never make that call."
+      "skills": [
+        "spec-writing",
+        "genie-space-design",
+        "unity-catalog-grant-planning",
+        "copilot-studio-topic-design",
+        "policy-lookup",
+        "concern-flagging"
+      ],
+      "promptContext": "You write spec.md. Inputs are intent.md and ai-risk-assessment.md, both accepted. Read DAD04, DAD05, the AI Principles and the assessment's parameters of use while you write, and put every conflict or concern at the top under Flagged concerns, before the requirements. The spec must define: the Genie space (curated tables only, instructions, and a benchmark question set that becomes the evaluation set in Git), the Unity Catalog grants by Entra group, the MCP tools exposed (workspace-wide endpoint or per-space tool, and why), the Copilot Studio topics and the Advanced Connector Policy, and the MLflow evaluation criteria. Stay inside the parameters the SDA accepted; if the right design would need a table, grant or connector outside them, say so as a flagged concern and stop. The product owner decides whether the spec progresses, consulting a technical lead for anything higher risk. You never make that call. The spec also states the region and data boundary of every model call, the retention period for transcripts, traces and logs and the fair-processing notice that covers them, the tool and MCP allow-list with provenance, and, for any Art. 22 case, how a human makes the decision rather than reviews it."
     },
     {
       "name": "Build Agent",
@@ -171,10 +253,18 @@
       "icon": "hammer",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Produce plan.md with the Copilot plan agent (files that change, order of work, risks, proof), wait for the engineer to correct and commit it, then implement under .github/copilot-instructions.md: the Databricks Asset Bundle (Genie space, UC functions, Vector Search index, Databricks App for any custom MCP server, grants), the Copilot Studio solution and OBO custom connector, and the MLflow evaluation set. Opens labelled PRs; never merges.",
+      "capabilities": "Produce plan.md with the Copilot plan agent (files that change, order of work, risks, proof), wait for the engineer to correct and commit it, then implement under .github/copilot-instructions.md: the Databricks Asset Bundle (Genie space, UC functions, Vector Search index, Databricks App for any custom MCP server, grants), the Copilot Studio solution and OBO custom connector, and the MLflow evaluation set. Opens labelled PRs; never merges. Ships only immutable versioned artefacts; keeps real data out of evaluation sets.",
       "budgetMonthlyCents": 8000,
-      "skills": ["implementation-planning", "copilot-plan-agent", "databricks-asset-bundles", "unity-catalog-sql", "copilot-studio-solutions", "custom-connector-obo", "pr-authoring"],
-      "promptContext": "You build only from an approved spec.md. First produce plan.md: files that change (databricks.yml and resources, notebooks or SQL, the Copilot Studio solution, the connector definition, the evaluation set), order of work, risks, and the proof that will show it works. The engineer corrects the plan before any code is written, and the approved version is committed. Then implement, following .github/copilot-instructions.md. Everything is declared in the bundle: if it is not in the repo it does not exist in the workspace. Every change lands by pull request carrying the agent label. You are not a reviewer and not an approver of your own work. Do not edit repository rulesets, environment protection rules, agent hooks, or code-owner files; they are the controls. Do not create personal access tokens; deployment identity is OIDC federation only."
+      "skills": [
+        "implementation-planning",
+        "copilot-plan-agent",
+        "databricks-asset-bundles",
+        "unity-catalog-sql",
+        "copilot-studio-solutions",
+        "custom-connector-obo",
+        "pr-authoring"
+      ],
+      "promptContext": "You build only from an approved spec.md. First produce plan.md: files that change (databricks.yml and resources, notebooks or SQL, the Copilot Studio solution, the connector definition, the evaluation set), order of work, risks, and the proof that will show it works. The engineer corrects the plan before any code is written, and the approved version is committed. Then implement, following .github/copilot-instructions.md. Everything is declared in the bundle: if it is not in the repo it does not exist in the workspace. Every change lands by pull request carrying the agent label. You are not a reviewer and not an approver of your own work. Do not edit repository rulesets, environment protection rules, agent hooks, or code-owner files; they are the controls. Do not create personal access tokens; deployment identity is OIDC federation only. Every deployable must be an immutable versioned artefact; if it cannot be named by version it cannot be rolled back and you have not finished. Evaluation sets and fixtures in Git contain no real personal or client data: synthetic rows, or a reference to a classified store. The agent definition (instructions, tools, model pin, budget) is versioned with code owners like everything else."
     },
     {
       "name": "Verification Agent",
@@ -183,10 +273,17 @@
       "icon": "search",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "On every PR: run the Actions checks, `databricks bundle validate` and a deploy to the dev target, the MLflow evaluation against the benchmark set, Copilot Studio test conversations, Copilot code review, and the REVIEW.md passes: bugs, security, compliance with spec.md and plan.md, and conformance to the parameters of use in ai-risk-assessment.md (grants, Genie scope, connectors, identity). Reports findings with severity. Findings inform the human reviewer; they never approve or block a PR by themselves.",
+      "capabilities": "On every PR: run the Actions checks, `databricks bundle validate` and a deploy to the dev target, the MLflow evaluation against the benchmark set, Copilot Studio test conversations, Copilot code review, and the REVIEW.md passes: bugs, security, compliance with spec.md and plan.md, and conformance to the parameters of use in ai-risk-assessment.md (grants, Genie scope, connectors, identity). Reports findings with severity. Findings inform the human reviewer; they never approve or block a PR by themselves. Runs injection, residency and real-data passes alongside the review passes.",
       "budgetMonthlyCents": 4000,
-      "skills": ["automated-review", "bundle-validation", "mlflow-agent-evaluation", "copilot-studio-testing", "security-scanning", "assessment-conformance"],
-      "promptContext": "You review; you do not decide. On each PR run the passes in REVIEW.md plus the ones this template adds: does the bundle validate and deploy to dev; does the Genie space answer the benchmark questions correctly under MLflow evaluation; does the Copilot Studio agent pass its test conversations; and does the change stay inside the parameters accepted by the Software Design Authority in ai-risk-assessment.md — the exact Unity Catalog grants, Genie tables, MCP tools, connectors, identity model and cost ceiling? Any new grant, table, connector or service-principal use is a high-severity finding. Report every finding with severity and evidence as required status checks and review comments. You cannot approve, request changes on your own authority, or merge. Human review is reserved for regulated and critical changes; make sure the code owner can see at a glance which of your findings fall there."
+      "skills": [
+        "automated-review",
+        "bundle-validation",
+        "mlflow-agent-evaluation",
+        "copilot-studio-testing",
+        "security-scanning",
+        "assessment-conformance"
+      ],
+      "promptContext": "You review; you do not decide. On each PR run the passes in REVIEW.md plus the ones this template adds: does the bundle validate and deploy to dev; does the Genie space answer the benchmark questions correctly under MLflow evaluation; does the Copilot Studio agent pass its test conversations; and does the change stay inside the parameters accepted by the Software Design Authority in ai-risk-assessment.md — the exact Unity Catalog grants, Genie tables, MCP tools, connectors, identity model and cost ceiling? Any new grant, table, connector or service-principal use is a high-severity finding. Report every finding with severity and evidence as required status checks and review comments. You cannot approve, request changes on your own authority, or merge. Human review is reserved for regulated and critical changes; make sure the code owner can see at a glance which of your findings fall there. Add three passes: a prompt-injection and exfiltration pass for any agent that reads documents or calls tools (NCSC AI guidance, OWASP LLM Top 10); a residency check that every model call goes to the region the spec states; and a data check that no evaluation set or fixture contains real personal or client data. A new grant, table, connector, model version or service-principal use is a high-severity envelope finding."
     },
     {
       "name": "Release Agent",
@@ -195,10 +292,17 @@
       "icon": "rocket",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "After a code owner merges: deploy the bundle to the test workspace, run the smoke evaluation, then request the prod deployment, which waits on the GitHub Environment required reviewer. Promote the Copilot Studio solution through the Power Platform pipeline, which waits on its approval step, and publish the agent only when the release manager has authorised it. Records every authorisation.",
+      "capabilities": "After a code owner merges: deploy the bundle to the test workspace, run the smoke evaluation, then request the prod deployment, which waits on the GitHub Environment required reviewer. Promote the Copilot Studio solution through the Power Platform pipeline, which waits on its approval step, and publish the agent only when the release manager has authorised it. Records every authorisation. Executes pre-authorised rollbacks and compressed-gate fix forwards.",
       "budgetMonthlyCents": 2000,
-      "skills": ["databricks-bundle-deploy", "github-environments", "power-platform-pipelines", "copilot-studio-publishing", "release-notes", "authorisation-request"],
-      "promptContext": "You deploy what a code owner has merged, nothing else. Test workspace and test Power Platform environment you may deploy to directly. Production requires two human approvals you cannot give: the named release manager as required reviewer on the GitHub prod Environment for the Databricks bundle, and the same person as approver on the Power Platform pipeline step for the Copilot Studio solution. Publishing the agent to Teams or M365 Copilot happens only after both. Do not attempt to bypass an environment protection rule, edit a pipeline, or use a personal token. Record each authorisation in the Release Authorisations list with who gave it and when. If a release would change which data the agent reaches, who can use it, or what it can write, stop and raise a reassessment issue for the Assessment Agent before asking for authorisation."
+      "skills": [
+        "databricks-bundle-deploy",
+        "github-environments",
+        "power-platform-pipelines",
+        "copilot-studio-publishing",
+        "release-notes",
+        "authorisation-request"
+      ],
+      "promptContext": "You deploy what a code owner has merged, nothing else. Test workspace and test Power Platform environment you may deploy to directly. Production requires two human approvals you cannot give: the named release manager as required reviewer on the GitHub prod Environment for the Databricks bundle, and the same person as approver on the Power Platform pipeline step for the Copilot Studio solution. Publishing the agent to Teams or M365 Copilot happens only after both. Do not attempt to bypass an environment protection rule, edit a pipeline, or use a personal token. Record each authorisation in the Release Authorisations list with who gave it and when. If a release would change which data the agent reaches, who can use it, or what it can write, stop and raise a reassessment issue for the Assessment Agent before asking for authorisation. Production is blocked until the DPIA and residency statement in the assessment are accepted. Rollback to a previously accepted version is pre-authorised as a standard change: the release manager triggers it, you redeploy the earlier immutable version, tell the service owner and record it. Fix forward is required instead when the previous version is now outside the envelope (retired model, revoked grant, disallowed connector), when it is the unsafe one, when data has moved forward, or when the fault is something the agent did at runtime. Emergency fixes take compressed gates, never skipped, and the SDA reviews within five working days."
     },
     {
       "name": "Operate Agent",
@@ -207,10 +311,18 @@
       "icon": "activity",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Watch bands.yaml control bands across Lakehouse Monitoring, Azure Monitor, Copilot Studio analytics and Purview audit: log at 1σ, diagnose at 2σ, propose at 3σ by drafting a new intent.md. Watch Unity Catalog system tables and Purview agentic risk detection for the agent operating outside its accepted parameters and raise a reassessment issue when it does. The service owner triages: fix now, schedule, or dismiss.",
+      "capabilities": "Watch bands.yaml control bands across Lakehouse Monitoring, Azure Monitor, Copilot Studio analytics and Purview audit: log at 1σ, diagnose at 2σ, propose at 3σ by drafting a new intent.md. Watch Unity Catalog system tables and Purview agentic risk detection for the agent operating outside its accepted parameters and raise a reassessment issue when it does. The service owner triages: fix now, schedule, or dismiss. Triggers the safe state, feeds the incident process on personal-data drift, serves access and erasure requests.",
       "budgetMonthlyCents": 3000,
-      "skills": ["lakehouse-monitoring", "azure-monitor", "copilot-studio-analytics", "purview-audit", "control-bands", "intent-drafting", "parameter-drift-detection"],
-      "promptContext": "You watch production and never change it. bands.yaml defines the control bands over Genie answer quality, latency, cost, connector usage and data access: at 1σ you log, at 2σ you diagnose and write up what you found, at 3σ you propose by drafting a new intent.md for the Intent Agent's stage. Separately, compare what the agent is actually doing, from Unity Catalog system tables, Purview audit logs and Copilot Studio analytics, with the parameters of use in ai-risk-assessment.md: tables queried, users served, connectors called, spend. Any drift is a reassessment issue for the Assessment Agent, because approved use must stay within the parameters authorised. Everything you raise goes to the service owner's triage queue. You do not fix, schedule or dismiss; a human does."
+      "skills": [
+        "lakehouse-monitoring",
+        "azure-monitor",
+        "copilot-studio-analytics",
+        "purview-audit",
+        "control-bands",
+        "intent-drafting",
+        "parameter-drift-detection"
+      ],
+      "promptContext": "You watch production and never change it. bands.yaml defines the control bands over Genie answer quality, latency, cost, connector usage and data access: at 1σ you log, at 2σ you diagnose and write up what you found, at 3σ you propose by drafting a new intent.md for the Intent Agent's stage. Separately, compare what the agent is actually doing, from Unity Catalog system tables, Purview audit logs and Copilot Studio analytics, with the parameters of use in ai-risk-assessment.md: tables queried, users served, connectors called, spend. Any drift is a reassessment issue for the Assessment Agent, because approved use must stay within the parameters authorised. Everything you raise goes to the service owner's triage queue. You do not fix, schedule or dismiss; a human does. You may trigger the agent's named safe state on a safety band breach; that is pre-authorised and the one thing an agent may do to itself, and moving forward out of it goes through the gates. Envelope drift on personal data may be a reportable breach on the 72-hour clock, so raise it to the incident process as well as the reassessment queue. Serve access and erasure requests over transcripts, traces and logs within their stated retention. Runtime actions are never reverted by redeploy: a compensating write is authorised by the service owner and logged against the original."
     }
   ],
   "goals": [
@@ -218,14 +330,51 @@
       "title": "Agentic DevOps on Microsoft and Databricks under Mace governance",
       "description": "Deliver Copilot Studio agents over governed Databricks data with agents drafting every artefact and humans accepting every gate, the audit trail in Git, Unity Catalog and Purview, and the AI risk assessment on file before design starts",
       "children": [
-        { "title": "Plan — intent.md accepted", "description": "Every piece of work starts as an intent.md corrected and committed by the product owner, naming the data it will touch", "assignee": "Intent Agent" },
-        { "title": "Assess — DAD05 gate passed", "description": "An AI risk assessment evidencing the six principles, with the Unity Catalog, Genie, connector and identity parameters, is accepted by the Software Design Authority before any design work; reassessment on drift", "assignee": "Assessment Agent" },
-        { "title": "Design — spec.md approved", "description": "Specs define the Genie space, grants, MCP tools, Copilot Studio topics and evaluation criteria against live policy, with concerns flagged first", "assignee": "Design Agent" },
-        { "title": "Build — plan.md before code", "description": "No code until the engineer has corrected and committed the plan; everything declared in the Asset Bundle and the solution; all changes by labelled PR", "assignee": "Build Agent" },
-        { "title": "Test — findings inform, never decide", "description": "Bundle validation, MLflow evaluation, Copilot Studio tests and REVIEW.md passes on every PR, plus assessment conformance; humans review regulated and critical changes", "assignee": "Verification Agent" },
-        { "title": "Deploy — named humans authorise", "description": "Code-owner merge, GitHub Environment approval for the prod workspace, Power Platform pipeline approval for the agent, then publish", "assignee": "Release Agent" },
-        { "title": "Operate — bands and drift watched", "description": "Control bands trigger log, diagnose or propose; drift from authorised parameters seen in Unity Catalog and Purview triggers reassessment", "assignee": "Operate Agent" },
-        { "title": "Traceability and separation of duties", "description": "Every agent action traceable to the human who authorised it; no agent approves its own artefact, merges its own PR, approves its own deployment, or authorises its own writes (DAD05 §8.6)", "assignee": "Delivery Lead" }
+        {
+          "title": "Plan — intent.md accepted",
+          "description": "Every piece of work starts as an intent.md corrected and committed by the product owner, naming the data it will touch",
+          "assignee": "Intent Agent"
+        },
+        {
+          "title": "Assess — DAD05 gate passed",
+          "description": "An AI risk assessment evidencing the six principles, with the Unity Catalog, Genie, connector and identity parameters, is accepted by the Software Design Authority before any design work; reassessment on drift",
+          "assignee": "Assessment Agent"
+        },
+        {
+          "title": "Design — spec.md approved",
+          "description": "Specs define the Genie space, grants, MCP tools, Copilot Studio topics and evaluation criteria against live policy, with concerns flagged first",
+          "assignee": "Design Agent"
+        },
+        {
+          "title": "Build — plan.md before code",
+          "description": "No code until the engineer has corrected and committed the plan; everything declared in the Asset Bundle and the solution; all changes by labelled PR",
+          "assignee": "Build Agent"
+        },
+        {
+          "title": "Test — findings inform, never decide",
+          "description": "Bundle validation, MLflow evaluation, Copilot Studio tests and REVIEW.md passes on every PR, plus assessment conformance; humans review regulated and critical changes",
+          "assignee": "Verification Agent"
+        },
+        {
+          "title": "Deploy — named humans authorise",
+          "description": "Code-owner merge, GitHub Environment approval for the prod workspace, Power Platform pipeline approval for the agent, then publish",
+          "assignee": "Release Agent"
+        },
+        {
+          "title": "Operate — bands and drift watched",
+          "description": "Control bands trigger log, diagnose or propose; drift from authorised parameters seen in Unity Catalog and Purview triggers reassessment",
+          "assignee": "Operate Agent"
+        },
+        {
+          "title": "Traceability and separation of duties",
+          "description": "Every agent action traceable to the human who authorised it; no agent approves its own artefact, merges its own PR, approves its own deployment, or authorises its own writes (DAD05 §8.6)",
+          "assignee": "Delivery Lead"
+        },
+        {
+          "title": "Change governance — the envelope decides the class",
+          "description": "Standard inside the envelope, normal on any extension (reassessed), emergency reviewed within five working days, prohibited refused by the platform; rollback pre-authorised, safe state named, DPIA and residency accepted before Deploy",
+          "assignee": "Delivery Lead"
+        }
       ]
     }
   ],
@@ -301,6 +450,38 @@
       "assigneeAgent": "Assessment Agent",
       "project": "Copilot Studio agent on Databricks — pilot",
       "description": "CS-DIG-SD-0002 §1.3 also requires retrospective assessment of AI already in service, submitted to the Software Design Authority. List every deployed Copilot Studio agent, Genie space and MCP server in scope for this team and schedule an assessment for each."
+    },
+    {
+      "title": "Gate 2 addendum — DPIA, residency statement, client agreement, EU AI Act class",
+      "status": "todo",
+      "priority": "urgent",
+      "assigneeAgent": "Assessment Agent",
+      "project": "Copilot Studio agent on Databricks — pilot",
+      "description": "Extend ai-risk-assessment.md with the four sections the SDA needs beyond the six principles: linked DPIA (DPO consulted) or written reason none is needed; region and data boundary of every model call plus vendor processing terms (no-training, retention); client agreement reference with the Information Steward accountable; EU AI Act classification. Deploy is blocked until the DPIA and residency statement are accepted."
+    },
+    {
+      "title": "Define the safe state and prove rollback",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Release Agent",
+      "project": "Copilot Studio agent on Databricks — pilot",
+      "description": "Name the agent's safe state (suspended, read-only, or pinned to the last accepted version) in the assessment; prove the platform can reach it without a person; prove a rollback to the previous immutable version works in test and is recorded as a pre-authorised standard change. Document when fix forward is required instead (old version now outside the envelope, old version unsafe, data moved forward, fault is Kind C)."
+    },
+    {
+      "title": "Injection, residency and real-data passes added to Test",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Verification Agent",
+      "project": "Copilot Studio agent on Databricks — pilot",
+      "description": "Add to the PR checks: a prompt-injection and exfiltration pass (NCSC AI guidance, OWASP LLM Top 10) for any agent that reads documents or calls tools; a residency check that each model call goes to the region the spec states; and a check that no evaluation set or fixture in Git contains real personal or client data."
+    },
+    {
+      "title": "Log retention and fair-processing notice before publishing",
+      "status": "todo",
+      "priority": "medium",
+      "assigneeAgent": "Design Agent",
+      "project": "Copilot Studio agent on Databricks — pilot",
+      "description": "Set the retention period for transcripts, traces, audit and write logs; confirm the lawful basis; get the staff fair-processing notice updated (and works-council consultation where EU staff are in scope); confirm access and erasure requests can be served over these stores. Approver: DPO."
     }
   ],
   "informationManagement": {
@@ -328,6 +509,251 @@
       "Reassessment on change — here the Operate Agent watches Unity Catalog and Purview for drift from the authorised parameters",
       "Bias and fairness — evidenced explicitly in the assessment because DAD05's own weakest principle match is Fairness",
       "The data path itself — neither playbook says how an agent reaches governed data; here it is Copilot Studio → managed MCP → Genie → Unity Catalog with on-behalf-of-user identity"
+    ],
+    "governanceModel": "https://claude.ai/code/artifact/bd7c6b29-5761-430b-9004-8f5c1369c1d5",
+    "ruleCounts": {
+      "mandatory": 11,
+      "recommended": 5,
+      "prohibited": 3
+    }
+  },
+  "changeGovernance": {
+    "reference": "https://claude.ai/code/artifact/bd7c6b29-5761-430b-9004-8f5c1369c1d5",
+    "envelope": "The parameters of use accepted at Gate 2 (Assess): the data the agent may touch, the tools it may call, the people it may serve, the writes it may make, the model version it runs, and the money it may spend. Gate 2 is the only gate that can change the envelope; every other gate operates inside it.",
+    "changeClasses": {
+      "standard": "Stays inside the envelope. Agents draft, the gate owners accept in turn. No board, no reassessment.",
+      "normal": "Would extend the envelope on any axis. Software Design Authority reassesses (with the Information Steward where client data is in scope), then the gates run.",
+      "emergency": "Service failing or unsafe. Release manager authorises; Software Design Authority reviews within five working days.",
+      "prohibited": "Outside the envelope with no accepted reassessment. Nobody accepts it; the platform refuses it."
+    },
+    "kindsOfChange": {
+      "A_product": "Code, pipelines, models, reports, spaces, grants. Ordinary change with an agent as author. Control: the seven-gate artefact chain; the PR is the change request.",
+      "B_agent": "Instructions, tools, connectors, model version, evaluation set, budget. Versioned like code with code owners; every change re-runs the evaluation set; a tool, grant, model or budget change is a change to the envelope and is reassessed.",
+      "C_by_agent": "Runtime actions. Reads and drafts inside the envelope are pre-authorised; writes carry a human of record (DAD05 §8.6); everything else is refused by identity, grants, connector policy and cost ceilings with a typed refusal."
+    },
+    "rollbackAndFixForward": {
+      "precondition": "Every deployable is an immutable versioned artefact; if it cannot be named by version it cannot be rolled back, and the Build gate checks this.",
+      "rollback": "Default and pre-authorised: a previous version was already inside the envelope and already carried a release authorisation. Release manager triggers, service owner told, register entry made, nobody convenes. Right when the previous version is still inside the current envelope, the fault is Kind A or B, and nothing irreversible has happened since.",
+      "fixForward": "Required when the previous version is now outside the envelope (retired model, revoked grant, disallowed connector), when the previous version is the unsafe one, when data has moved forward under a migration, or when the fault is Kind C. Emergency path if the service is failing; gates compressed to hours, never skipped.",
+      "kindC": "Runtime actions are compensated, not reverted: a compensating write authorised by the service owner and logged against the original. Bulk corrections touching client data are reviewed by the Software Design Authority first.",
+      "safeState": "Every agent has a named safe state (suspended, read-only, or pinned to the last accepted version) the platform can reach without a person. Operate may trigger it on a safety band breach as a pre-authorised action; it is the one thing an agent may do to itself. Moving forward out of the safe state always goes through the gates.",
+      "platform": "Asset Bundles and Power Platform solutions roll back by redeploying the previous version from Git; the GitHub prod Environment reviewer approves it as a pre-authorised standard change. Fabric deployment pipelines have no native rollback: with Git integration the workspace is reset to the earlier commit. A model rollback is a pin change in the agent definition and goes through Gate 5."
+    },
+    "obligations": [
+      {
+        "obligation": "DPIA (UK GDPR Art. 35)",
+        "ownedAt": "Assess; checked at Deploy",
+        "by": "DPO consulted; product owner accountable",
+        "note": "Separate document from the AI risk assessment, linked from it; go-live conditional on it"
+      },
+      {
+        "obligation": "Purpose limitation and minimisation",
+        "ownedAt": "Assess; enforced from Design",
+        "by": "Software Design Authority",
+        "note": "Grants, row-level security and scope in the envelope are the minimisation control and the assessment says so"
+      },
+      {
+        "obligation": "Logs are personal data",
+        "ownedAt": "Design sets retention; Operate serves requests",
+        "by": "DPO; service owner",
+        "note": "Transcripts, traces, audit and write logs: retention period, lawful basis, staff fair-processing notice, in scope for access and erasure"
+      },
+      {
+        "obligation": "Automated decision-making (Art. 22)",
+        "ownedAt": "Assess flags; Design specifies",
+        "by": "Product owner",
+        "note": "Where an output gates a payment, compliance pass or staffing decision, a human makes the decision"
+      },
+      {
+        "obligation": "Breach notification",
+        "ownedAt": "Operate",
+        "by": "Service owner; DPO",
+        "note": "Envelope drift on personal data may be a reportable breach on the 72-hour clock; feeds the incident process as well as reassessment"
+      },
+      {
+        "obligation": "Residency of every model call",
+        "ownedAt": "Design; verified at Test",
+        "by": "Technical lead",
+        "note": "State region and data boundary per model call; Claude in Foundry is US-only; Copilot Studio and Databricks have features that process outside the environment's region unless disabled"
+      },
+      {
+        "obligation": "International transfers",
+        "ownedAt": "Assess",
+        "by": "DPO; procurement",
+        "note": "UK-US Data Bridge or IDTA addendum only with vendor processing terms in place; check no-training and retention commitments (Azure OpenAI abuse monitoring retains prompts up to 30 days unless exempted)"
+      },
+      {
+        "obligation": "Client data bounded by the client's agreement",
+        "ownedAt": "Assess",
+        "by": "Information Steward (accountable) with the commercial owner",
+        "note": "DAD05 §9.1 and CS-DIG-SD-0002 §1.3; public-sector and NHS clients often mandate UK-only processing"
+      },
+      {
+        "obligation": "Prompt injection and exfiltration",
+        "ownedAt": "Test",
+        "by": "Security; engineer",
+        "note": "An agent that reads documents can be instructed by a document; NCSC AI guidance and OWASP LLM Top 10"
+      },
+      {
+        "obligation": "Tools and MCP servers are supply chain",
+        "ownedAt": "Design; Build",
+        "by": "Security; code owner",
+        "note": "Allow-lists and provenance; one non-human identity per agent, never shared"
+      },
+      {
+        "obligation": "Evaluation sets are a leak path",
+        "ownedAt": "Build; checked at Test",
+        "by": "Engineer; Information Steward",
+        "note": "No real personal or client data in Git: synthetic rows or a classified store referenced by the bundle"
+      },
+      {
+        "obligation": "Professional liability",
+        "ownedAt": "Standing, before first client use",
+        "by": "Commercial owner; legal",
+        "note": "Advice drafted by an agent and accepted by a person is that person's advice for PI purposes; confirm cover"
+      },
+      {
+        "obligation": "EU AI Act",
+        "ownedAt": "Assess",
+        "by": "Software Design Authority; legal",
+        "note": "Deployer obligations for EU operations from August 2026; transparency duties; check Annex III for safety, employment or access to services"
+      },
+      {
+        "obligation": "Records, retention and disclosure",
+        "ownedAt": "Operate",
+        "by": "Records management",
+        "note": "Outputs and the artefact chain are business records subject to retention, legal hold and disclosure"
+      }
+    ],
+    "rules": [
+      {
+        "class": "Mandatory",
+        "rule": "Every AI system has an accepted risk assessment that states its parameters of use before design starts, and that assessment is the definition of a standard change for that system."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Each of the seven gates names the human who accepted it, and the platform records that identity. An agent is never the approver of an artefact it produced."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Any change that would extend the parameters of use on any axis (data, tools, users, writes, model version, cost) is reassessed by the Software Design Authority before it is built."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "The agent definition is version-controlled with code owners, and no version deploys without a passing evaluation run against the evaluation set in Git."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Production deployments and agent publishing are blocked by the platform until a named release manager authorises them, and the authorisation is recorded."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Runtime writes carry the identity of the human who authorised them: the calling user on-behalf-of, or a pre-authorised write listed in the assessment. Writes refused for lack of authorisation return a typed refusal."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Emergency changes are authorised by the release manager and reviewed by the Software Design Authority within five working days, with the review recorded against the change."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Every deployable is an immutable versioned artefact, every AI system has a named safe state the platform can reach without a person, and returning to a previously accepted version or to the safe state is pre-authorised. Moving forward from it goes through the gates."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "The risk assessment links a DPIA, or records why none is needed, and states the region and data boundary of every model call and the vendor processing terms relied on. Deploy is blocked until both are accepted."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Client data enters an envelope only with the client's formal written agreement referenced in the assessment and the Information Steward's sign-off."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Evaluation sets and test fixtures in Git contain no real personal or client data."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Instructions to an agent are context, not control. Each governance rule has a preventive control that fails closed, independent of what the agent is told."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Operate compares the audit of what the agent read, wrote, served and spent with its parameters of use at least weekly; any variance is raised as a reassessment issue rather than tuned away."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Test-stage findings inform the human reviewer and are never configured to approve or block a change on their own."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Test includes a prompt-injection and exfiltration pass for any agent that reads documents or calls tools, and the findings are retained with the change."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Transcripts, traces and audit logs have a stated retention period and are covered by the staff fair-processing notice before the agent is published."
+      },
+      {
+        "class": "Prohibited",
+        "rule": "An agent operating under a shared service identity making writes on behalf of users."
+      },
+      {
+        "class": "Prohibited",
+        "rule": "An agent setting, supplying or bypassing any approval, authorisation or hook, including its own budget ceiling."
+      },
+      {
+        "class": "Prohibited",
+        "rule": "Autonomous purchasing or any spend above the ceiling attached to the agent's identity."
+      }
+    ],
+    "raciAdditions": [
+      {
+        "decision": "Confirm client agreement, residency and DPIA for client or personal data",
+        "accountable": "Information Steward",
+        "responsible": "Assessment Agent",
+        "consulted": [
+          "Product owner",
+          "Software Design Authority"
+        ]
+      },
+      {
+        "decision": "Roll back to a previous version",
+        "accountable": "Release manager",
+        "responsible": "Engineer",
+        "consulted": [
+          "Service owner"
+        ],
+        "informed": [
+          "Product owner",
+          "Software Design Authority"
+        ]
+      },
+      {
+        "decision": "Compensating write (reverse a Kind C action)",
+        "accountable": "Service owner",
+        "responsible": "Agent",
+        "consulted": [
+          "Software Design Authority",
+          "Information Steward"
+        ]
+      },
+      {
+        "decision": "Change model, tools or budget (Kind B)",
+        "accountable": "Software Design Authority",
+        "responsible": "Engineer and agent",
+        "consulted": [
+          "Product owner"
+        ],
+        "informed": [
+          "AI Governance Group"
+        ]
+      },
+      {
+        "decision": "Retire or suspend an agent",
+        "accountable": "Software Design Authority",
+        "responsible": "Release manager",
+        "consulted": [
+          "Product owner",
+          "Service owner"
+        ]
+      }
     ]
   }
 }

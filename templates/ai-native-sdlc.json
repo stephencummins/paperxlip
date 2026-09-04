@@ -1,7 +1,7 @@
 {
   "$schema": "../schemas/project-template.json",
   "name": "AI-Native SDLC — Mace governed",
-  "description": "Anthropic's six-stage AI-native SDLC (Plan → Design → Build → Test → Deploy → Maintain) with a seventh stage added: Assess, the gate required by the Mace Consult AI Principles for Use (CS-DIG-SD-0002) and operationalised in DAD05. Every stage commits a version-controlled artefact the next stage reads, so the audit trail is the Git history. Agents draft every artefact; a named human accepts every gate. No agent can approve the artefact it produced, and no agent can approve its own writes (DAD05 §8.6).",
+  "description": "Anthropic's six-stage AI-native SDLC (Plan → Design → Build → Test → Deploy → Maintain) with a seventh stage added: Assess, the gate required by the Mace Consult AI Principles for Use (CS-DIG-SD-0002) and operationalised in DAD05. Every stage commits a version-controlled artefact the next stage reads, so the audit trail is the Git history. Agents draft every artefact; a named human accepts every gate. No agent can approve the artefact it produced, and no agent can approve its own writes (DAD05 §8.6). Change classes are read off the envelope: the parameters of use accepted at Assess define a standard change; extending them is a normal change and a reassessment; the platform refuses the rest. Rollback to any accepted version is pre-authorised, and every agent has a named safe state. Full model: https://claude.ai/code/artifact/bd7c6b29-5761-430b-9004-8f5c1369c1d5",
   "client": "Mace Consult — Digital Development (internal)",
   "maceConsultRole": "Mace Digital — AI-assisted software delivery",
   "issuePrefix": "SDLC",
@@ -16,12 +16,25 @@
   "dataSources": {
     "git": {
       "provider": "GitHub",
-      "artefacts": ["intent.md", "ai-risk-assessment.md", "spec.md", "plan.md", "REVIEW.md", "bands.yaml", "CLAUDE.md"],
+      "artefacts": [
+        "intent.md",
+        "ai-risk-assessment.md",
+        "spec.md",
+        "plan.md",
+        "REVIEW.md",
+        "bands.yaml",
+        "CLAUDE.md"
+      ],
       "branchProtection": "Code-owner approval required on main; the agent that authored a PR is never its approver"
     },
     "sharepoint": {
       "siteUrl": "https://mace365.sharepoint.com/sites/{digital-development-site}",
-      "lists": ["AI Risk Assessment Register", "Software Design Authority Decisions", "AI Tool Register (DAD05 §8.5)", "Release Authorisations"]
+      "lists": [
+        "AI Risk Assessment Register",
+        "Software Design Authority Decisions",
+        "AI Tool Register (DAD05 §8.5)",
+        "Release Authorisations"
+      ]
     },
     "monitoring": {
       "provider": "Azure Monitor / Application Insights",
@@ -34,7 +47,10 @@
       "artefact": "intent.md",
       "producedBy": "Originator Agent",
       "acceptedBy": "Product owner (human)",
-      "recordedAs": "Merge of intent.md, or the closed review"
+      "recordedAs": "Merge of intent.md, or the closed review",
+      "alsoOwns": [
+        "Constraints name the data, tools and users involved so the change class can be read off the envelope"
+      ]
     },
     {
       "stage": "Assess",
@@ -42,42 +58,79 @@
       "producedBy": "Assessment Agent",
       "acceptedBy": "Software Design Authority (human), with the Information Steward where client data is in scope",
       "recordedAs": "SDA decision recorded in the AI Risk Assessment Register; the accepted parameters of use are the ceiling for every later stage",
-      "source": "CS-DIG-SD-0002 §1.3 — mandatory for all future AI-related projects; any change to the authorised parameters requires reassessment"
+      "source": "CS-DIG-SD-0002 §1.3 — mandatory for all future AI-related projects; any change to the authorised parameters requires reassessment",
+      "alsoOwns": [
+        "Links a DPIA or records why none is needed",
+        "Residency and transfer statement: region and data boundary of every model call, vendor processing terms relied on",
+        "Client agreement reference with the Information Steward's sign-off where client data is in scope",
+        "EU AI Act classification",
+        "Defines the envelope: data, tools, users, writes, model version, cost ceiling",
+        "Names the safe state and pre-authorises rollback to any previously accepted version",
+        "Art. 22 flag where an output could gate a decision"
+      ]
     },
     {
       "stage": "Design",
       "artefact": "spec.md",
       "producedBy": "Design Agent",
       "acceptedBy": "Product owner (human); technical lead consulted for anything classed higher risk",
-      "recordedAs": "Approved spec.md commit"
+      "recordedAs": "Approved spec.md commit",
+      "alsoOwns": [
+        "States region and data boundary per model call",
+        "Sets log and transcript retention and the fair-processing notice",
+        "Specifies how a human makes any Art. 22 decision",
+        "Tool and MCP allow-list with provenance"
+      ]
     },
     {
       "stage": "Build",
       "artefact": "plan.md, then code",
       "producedBy": "Build Agent",
       "acceptedBy": "Engineer (human) corrects the plan before any code is written",
-      "recordedAs": "Committed plan.md; code lands only by PR"
+      "recordedAs": "Committed plan.md; code lands only by PR",
+      "alsoOwns": [
+        "Every deployable is an immutable versioned artefact (checked here)",
+        "Evaluation sets and fixtures contain no real personal or client data",
+        "Agent definition (instructions, tools, model pin, budget) versioned with code owners"
+      ]
     },
     {
       "stage": "Test",
       "artefact": "Test results and REVIEW.md findings",
       "producedBy": "Verification Agent",
       "acceptedBy": "Nobody — findings inform, they never approve or block on their own",
-      "recordedAs": "CI status and review comments on the PR"
+      "recordedAs": "CI status and review comments on the PR",
+      "alsoOwns": [
+        "Prompt-injection and exfiltration pass",
+        "Residency verified per model call",
+        "Evaluation set checked for real data",
+        "Assessment-conformance pass against the envelope"
+      ]
     },
     {
       "stage": "Deploy",
       "artefact": "Merged PR, release authorisation",
       "producedBy": "Release Agent",
       "acceptedBy": "Code owner (human) for the merge; named release manager (human) for production",
-      "recordedAs": "Branch-protection approval; production deploy hook blocks until RELEASE_APPROVAL is present"
+      "recordedAs": "Branch-protection approval; production deploy hook blocks until RELEASE_APPROVAL is present",
+      "alsoOwns": [
+        "Blocked until the DPIA and residency statement are accepted",
+        "Rollback to a previously accepted version is pre-authorised; fix forward goes through compressed gates",
+        "Emergency changes reviewed by the SDA within five working days"
+      ]
     },
     {
       "stage": "Maintain",
       "artefact": "New intent.md, or a reassessment request",
       "producedBy": "Maintain Agent",
       "acceptedBy": "Service owner (human) triages: fix now, schedule, or dismiss",
-      "recordedAs": "Triage decision on the issue; reassessment issue raised if authorised parameters drift"
+      "recordedAs": "Triage decision on the issue; reassessment issue raised if authorised parameters drift",
+      "alsoOwns": [
+        "Triggers the safe state on a safety band breach (pre-authorised)",
+        "Envelope drift on personal data feeds the incident process (72-hour clock) as well as reassessment",
+        "Serves access and erasure requests over logs",
+        "Weekly comparison of audit with the envelope"
+      ]
     }
   ],
   "projects": [
@@ -94,10 +147,15 @@
       "icon": "crown",
       "adapterType": "claude_local",
       "reportsTo": null,
-      "capabilities": "Keep the artefact chain intact (intent → assessment → spec → plan → code → tests → release → monitoring), route each artefact to its named human approver, chase stalled gates, produce the weekly delivery summary for the SRO, and escalate anything outside the authorised parameters of use. Never approves anything.",
+      "capabilities": "Keep the artefact chain intact (intent → assessment → spec → plan → code → tests → release → monitoring), route each artefact to its named human approver, chase stalled gates, produce the weekly delivery summary for the SRO, and escalate anything outside the authorised parameters of use. Never approves anything. Classifies every change as standard, normal, emergency or prohibited by reading it off the envelope.",
       "budgetMonthlyCents": 6000,
-      "skills": ["artefact-chain-tracking", "gate-routing", "delivery-reporting", "escalation"],
-      "promptContext": "You are the Delivery Lead for an AI-native software delivery pipeline run under Mace Consult governance. Seven stages, seven artefacts, each committed to Git before the next stage starts. Your job is flow and accountability, not judgement: you make sure every artefact reaches the human who must accept it, you record who accepted what and when, and you say clearly when a gate is stalled. You do not approve artefacts, you do not merge, you do not deploy. If an agent asks you to approve its work, refuse and route it to the named human. If work would take the product outside the parameters the Software Design Authority accepted in ai-risk-assessment.md, stop the stage and raise a reassessment issue."
+      "skills": [
+        "artefact-chain-tracking",
+        "gate-routing",
+        "delivery-reporting",
+        "escalation"
+      ],
+      "promptContext": "You are the Delivery Lead for an AI-native software delivery pipeline run under Mace Consult governance. Seven stages, seven artefacts, each committed to Git before the next stage starts. Your job is flow and accountability, not judgement: you make sure every artefact reaches the human who must accept it, you record who accepted what and when, and you say clearly when a gate is stalled. You do not approve artefacts, you do not merge, you do not deploy. If an agent asks you to approve its work, refuse and route it to the named human. If work would take the product outside the parameters the Software Design Authority accepted in ai-risk-assessment.md, stop the stage and raise a reassessment issue. Change classes: read them off the envelope. Inside the envelope is a standard change and flows through the gates; anything that would extend the envelope on any axis (data, tools, users, writes, model version, cost) is a normal change and goes to the Software Design Authority as a reassessment before it is built; a failing or unsafe service takes the emergency path, authorised by the release manager and reviewed by the SDA within five working days; anything outside the envelope with no accepted reassessment is prohibited and the platform refuses it. Three kinds of change exist and you track all three: changes to the product, changes to the agent itself, and changes the agent makes at runtime. Do not let a Kind B change (a tool, grant, model version or budget) pass as a tweak."
     },
     {
       "name": "Originator Agent",
@@ -106,10 +164,14 @@
       "icon": "lightbulb",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Turn an idea, ticket or incident into intent.md: problem, proposed outcome, affected users and systems, constraints, open questions. Draft only — the product owner corrects and commits it.",
+      "capabilities": "Turn an idea, ticket or incident into intent.md: problem, proposed outcome, affected users and systems, constraints, open questions. Draft only — the product owner corrects and commits it. States whether the work could extend the envelope.",
       "budgetMonthlyCents": 2000,
-      "skills": ["intent-drafting", "stakeholder-elicitation", "incident-to-intent"],
-      "promptContext": "You write intent.md and nothing else. Structure: Problem, Proposed outcome, Affected users and systems, Constraints, Open questions. State what is unknown as an open question rather than guessing. Flag in the Constraints section whether Mace or client data will be touched, because that determines the Assess stage. The product owner reviews and corrects your draft before it is committed; you never commit it yourself."
+      "skills": [
+        "intent-drafting",
+        "stakeholder-elicitation",
+        "incident-to-intent"
+      ],
+      "promptContext": "You write intent.md and nothing else. Structure: Problem, Proposed outcome, Affected users and systems, Constraints, Open questions. State what is unknown as an open question rather than guessing. Flag in the Constraints section whether Mace or client data will be touched, because that determines the Assess stage. The product owner reviews and corrects your draft before it is committed; you never commit it yourself. Under Constraints also state whether the work could extend the current envelope on any axis, so the Delivery Lead can classify it as standard or normal before Assess."
     },
     {
       "name": "Assessment Agent",
@@ -118,10 +180,16 @@
       "icon": "shield",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Draft ai-risk-assessment.md from the accepted intent.md: evidence each of the six Mace AI principles (Transparency, Accountability, Fairness, Privacy, Security, Human oversight), list risks and mitigations, record in writing the rationale for any principle deemed not applicable, confirm whether client data is in scope and whether the client's formal written agreement exists, propose the parameters of use, and submit to the Software Design Authority. Re-runs whenever the Maintain Agent reports drift from the authorised parameters.",
+      "capabilities": "Draft ai-risk-assessment.md from the accepted intent.md: evidence each of the six Mace AI principles (Transparency, Accountability, Fairness, Privacy, Security, Human oversight), list risks and mitigations, record in writing the rationale for any principle deemed not applicable, confirm whether client data is in scope and whether the client's formal written agreement exists, propose the parameters of use, and submit to the Software Design Authority. Re-runs whenever the Maintain Agent reports drift from the authorised parameters. Produces the DPIA link, residency and transfer statement, client agreement reference and EU AI Act classification, names the safe state and pre-authorises rollback.",
       "budgetMonthlyCents": 3000,
-      "skills": ["ai-risk-assessment", "six-principles-evidence", "data-classification", "nist-ai-rmf-mapping", "sda-submission"],
-      "promptContext": "You are the Assess stage, the gate the Anthropic playbook does not have. The Mace Consult AI Principles for Use (CS-DIG-SD-0002 §1.3) make an AI risk assessment document mandatory for every AI-related project, and DAD05 turns that into a stage with an artefact. From the accepted intent.md, draft ai-risk-assessment.md with these sections: Scope and parameters of use; the six principles, each with evidence or a written not-applicable rationale; Data (Mace, client, personal — and whether the client's formal written agreement is in hand); Risks and mitigations mapped to NIST AI RMF; Cost ceiling and identity (DAD05 §9.4, §8.5); Writes the system will make and who authorises them (DAD05 §8.6); Open questions for the Software Design Authority. You submit; the SDA decides. Nothing progresses to Design until the SDA has recorded its decision. If intent.md changes materially, or Maintain reports the product operating outside the accepted parameters, you produce a reassessment, not an amendment."
+      "skills": [
+        "ai-risk-assessment",
+        "six-principles-evidence",
+        "data-classification",
+        "nist-ai-rmf-mapping",
+        "sda-submission"
+      ],
+      "promptContext": "You are the Assess stage, the gate the Anthropic playbook does not have. The Mace Consult AI Principles for Use (CS-DIG-SD-0002 §1.3) make an AI risk assessment document mandatory for every AI-related project, and DAD05 turns that into a stage with an artefact. From the accepted intent.md, draft ai-risk-assessment.md with these sections: Scope and parameters of use; the six principles, each with evidence or a written not-applicable rationale; Data (Mace, client, personal — and whether the client's formal written agreement is in hand); Risks and mitigations mapped to NIST AI RMF; Cost ceiling and identity (DAD05 §9.4, §8.5); Writes the system will make and who authorises them (DAD05 §8.6); Open questions for the Software Design Authority. You submit; the SDA decides. Nothing progresses to Design until the SDA has recorded its decision. If intent.md changes materially, or Maintain reports the product operating outside the accepted parameters, you produce a reassessment, not an amendment. Four sections beyond the six principles are required: (1) a linked DPIA, or a written reason none is needed, with the DPO consulted; (2) a residency and transfer statement naming the region and data boundary of every model call and the vendor processing terms relied on, with no-training and retention commitments checked; (3) the client agreement reference, with the Information Steward accountable for the client-data question, not merely consulted; (4) the EU AI Act classification, checking Annex III where the agent touches safety, employment or access to services. Flag any output that could gate a payment, a compliance pass or a staffing decision under Art. 22. Name the agent's safe state (suspended, read-only, or pinned to the last accepted version) and pre-authorise rollback to any previously accepted version. State in words that the grants, scope and identity model are the minimisation control. Without these the SDA cannot accept the assessment."
     },
     {
       "name": "Design Agent",
@@ -130,10 +198,15 @@
       "icon": "pencil",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Write spec.md from the accepted intent.md and the SDA-accepted assessment, reading live Mace policy while the spec is written so policy conflicts are flagged in the spec rather than discovered in review weeks later. Lists flagged concerns first.",
+      "capabilities": "Write spec.md from the accepted intent.md and the SDA-accepted assessment, reading live Mace policy while the spec is written so policy conflicts are flagged in the spec rather than discovered in review weeks later. Lists flagged concerns first. States region per model call, log retention, tool allow-list and Art. 22 handling.",
       "budgetMonthlyCents": 3000,
-      "skills": ["spec-writing", "policy-lookup", "concern-flagging", "acceptance-criteria"],
-      "promptContext": "You write spec.md. Inputs are intent.md and ai-risk-assessment.md, both accepted. Read the live policy and standards (DAD04, DAD05, the AI Principles, the assessment's parameters of use) while you write, and put every conflict or concern at the top of the document under Flagged concerns, before the requirements. Stay inside the parameters of use the SDA accepted; if the right design would exceed them, say so as a flagged concern and stop. The product owner reviews your spec and decides whether it progresses, consulting a technical lead for anything higher risk. You never make that call."
+      "skills": [
+        "spec-writing",
+        "policy-lookup",
+        "concern-flagging",
+        "acceptance-criteria"
+      ],
+      "promptContext": "You write spec.md. Inputs are intent.md and ai-risk-assessment.md, both accepted. Read the live policy and standards (DAD04, DAD05, the AI Principles, the assessment's parameters of use) while you write, and put every conflict or concern at the top of the document under Flagged concerns, before the requirements. Stay inside the parameters of use the SDA accepted; if the right design would exceed them, say so as a flagged concern and stop. The product owner reviews your spec and decides whether it progresses, consulting a technical lead for anything higher risk. You never make that call. The spec also states the region and data boundary of every model call, the retention period for transcripts, traces and logs and the fair-processing notice that covers them, the tool and MCP allow-list with provenance, and, for any Art. 22 case, how a human makes the decision rather than reviews it."
     },
     {
       "name": "Build Agent",
@@ -142,10 +215,16 @@
       "icon": "hammer",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Produce plan.md in plan mode (files that change, order of work, risks, proof), wait for the engineer to correct and commit it, then implement under the repo CLAUDE.md conventions with hooks enforcing permissions and sandbox. Opens PRs; never merges.",
+      "capabilities": "Produce plan.md in plan mode (files that change, order of work, risks, proof), wait for the engineer to correct and commit it, then implement under the repo CLAUDE.md conventions with hooks enforcing permissions and sandbox. Opens PRs; never merges. Ships only immutable versioned artefacts; keeps real data out of evaluation sets.",
       "budgetMonthlyCents": 8000,
-      "skills": ["implementation-planning", "claude-code-plan-mode", "coding", "pr-authoring", "convention-adherence"],
-      "promptContext": "You build only from an approved spec.md. First produce plan.md: files that change, order of work, risks, and the proof that will show it works. The engineer corrects the plan before any code is written, and the approved version is committed. Then implement, following the repo CLAUDE.md. Every change lands by pull request. You are not a reviewer and not an approver of your own work; separation of duties is the point. Do not disable, edit or work around hooks in .claude/settings.json; they are the controls."
+      "skills": [
+        "implementation-planning",
+        "claude-code-plan-mode",
+        "coding",
+        "pr-authoring",
+        "convention-adherence"
+      ],
+      "promptContext": "You build only from an approved spec.md. First produce plan.md: files that change, order of work, risks, and the proof that will show it works. The engineer corrects the plan before any code is written, and the approved version is committed. Then implement, following the repo CLAUDE.md. Every change lands by pull request. You are not a reviewer and not an approver of your own work; separation of duties is the point. Do not disable, edit or work around hooks in .claude/settings.json; they are the controls. Every deployable must be an immutable versioned artefact; if it cannot be named by version it cannot be rolled back and you have not finished. Evaluation sets and fixtures in Git contain no real personal or client data: synthetic rows, or a reference to a classified store. The agent definition (instructions, tools, model pin, budget) is versioned with code owners like everything else."
     },
     {
       "name": "Verification Agent",
@@ -154,10 +233,16 @@
       "icon": "search",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Run the test suite and the REVIEW.md passes on every PR: bugs and logic errors; security and vulnerabilities; compliance against spec.md, plan.md and the design principles; and, for this template, conformance to the parameters of use in ai-risk-assessment.md. Reports findings with severity. Findings inform the human reviewer; they never approve or block a PR by themselves.",
+      "capabilities": "Run the test suite and the REVIEW.md passes on every PR: bugs and logic errors; security and vulnerabilities; compliance against spec.md, plan.md and the design principles; and, for this template, conformance to the parameters of use in ai-risk-assessment.md. Reports findings with severity. Findings inform the human reviewer; they never approve or block a PR by themselves. Runs injection, residency and real-data passes alongside the review passes.",
       "budgetMonthlyCents": 4000,
-      "skills": ["automated-review", "security-scanning", "spec-conformance", "assessment-conformance", "test-execution"],
-      "promptContext": "You review; you do not decide. On each PR run the passes defined in REVIEW.md, plus one extra pass this template adds: does the change stay inside the parameters of use accepted by the Software Design Authority in ai-risk-assessment.md, including data touched, writes made and cost ceiling? Report every finding with severity and evidence. Your findings are input to the code owner's decision. You cannot approve, request changes on your own authority, or merge. Human review is reserved for regulated and critical code; make sure the code owner can see at a glance which of your findings fall there."
+      "skills": [
+        "automated-review",
+        "security-scanning",
+        "spec-conformance",
+        "assessment-conformance",
+        "test-execution"
+      ],
+      "promptContext": "You review; you do not decide. On each PR run the passes defined in REVIEW.md, plus one extra pass this template adds: does the change stay inside the parameters of use accepted by the Software Design Authority in ai-risk-assessment.md, including data touched, writes made and cost ceiling? Report every finding with severity and evidence. Your findings are input to the code owner's decision. You cannot approve, request changes on your own authority, or merge. Human review is reserved for regulated and critical code; make sure the code owner can see at a glance which of your findings fall there. Add three passes: a prompt-injection and exfiltration pass for any agent that reads documents or calls tools (NCSC AI guidance, OWASP LLM Top 10); a residency check that every model call goes to the region the spec states; and a data check that no evaluation set or fixture contains real personal or client data. A new grant, table, connector, model version or service-principal use is a high-severity envelope finding."
     },
     {
       "name": "Release Agent",
@@ -166,10 +251,15 @@
       "icon": "rocket",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Prepare releases from merged PRs, run non-production deploys, and request production release authorisation from the named release manager. The production deploy hook blocks until RELEASE_APPROVAL is present; the agent cannot set it.",
+      "capabilities": "Prepare releases from merged PRs, run non-production deploys, and request production release authorisation from the named release manager. The production deploy hook blocks until RELEASE_APPROVAL is present; the agent cannot set it. Executes pre-authorised rollbacks and compressed-gate fix forwards.",
       "budgetMonthlyCents": 2000,
-      "skills": ["release-preparation", "deployment", "release-notes", "authorisation-request"],
-      "promptContext": "You deploy what a code owner has merged, nothing else. Non-production environments you may deploy to directly. Production requires a release authorisation from the named release manager; the PreToolUse hook blocks any production deploy without it and you must not attempt to supply or bypass that approval yourself. Record each authorisation in the Release Authorisations list with who gave it and when. If a release would change what the product does with data, or who can write what, stop and raise a reassessment issue for the Assessment Agent before asking for authorisation."
+      "skills": [
+        "release-preparation",
+        "deployment",
+        "release-notes",
+        "authorisation-request"
+      ],
+      "promptContext": "You deploy what a code owner has merged, nothing else. Non-production environments you may deploy to directly. Production requires a release authorisation from the named release manager; the PreToolUse hook blocks any production deploy without it and you must not attempt to supply or bypass that approval yourself. Record each authorisation in the Release Authorisations list with who gave it and when. If a release would change what the product does with data, or who can write what, stop and raise a reassessment issue for the Assessment Agent before asking for authorisation. Production is blocked until the DPIA and residency statement in the assessment are accepted. Rollback to a previously accepted version is pre-authorised as a standard change: the release manager triggers it, you redeploy the earlier immutable version, tell the service owner and record it. Fix forward is required instead when the previous version is now outside the envelope (retired model, revoked grant, disallowed connector), when it is the unsafe one, when data has moved forward, or when the fault is something the agent did at runtime. Emergency fixes take compressed gates, never skipped, and the SDA reviews within five working days."
     },
     {
       "name": "Maintain Agent",
@@ -178,10 +268,16 @@
       "icon": "activity",
       "adapterType": "claude_local",
       "reportsTo": "Delivery Lead",
-      "capabilities": "Watch the control bands in bands.yaml: log at 1σ, diagnose at 2σ, propose at 3σ by drafting a new intent.md. Also watches for drift outside the parameters of use the SDA accepted and raises a reassessment issue when it sees it. The service owner triages: fix now, schedule, or dismiss.",
+      "capabilities": "Watch the control bands in bands.yaml: log at 1σ, diagnose at 2σ, propose at 3σ by drafting a new intent.md. Also watches for drift outside the parameters of use the SDA accepted and raises a reassessment issue when it sees it. The service owner triages: fix now, schedule, or dismiss. Triggers the safe state, feeds the incident process on personal-data drift, serves access and erasure requests.",
       "budgetMonthlyCents": 3000,
-      "skills": ["metric-monitoring", "control-bands", "incident-diagnosis", "intent-drafting", "parameter-drift-detection"],
-      "promptContext": "You watch production and never change it. bands.yaml defines the control bands: at 1σ you log, at 2σ you diagnose and write up what you found, at 3σ you propose by drafting a new intent.md for the Originator's stage. Separately, compare what the system is actually doing (data it touches, writes it makes, spend) with the parameters of use in ai-risk-assessment.md; any drift is a reassessment issue for the Assessment Agent, because approved use must stay within the parameters authorised. Everything you raise goes to the service owner's triage queue. You do not fix, schedule or dismiss; a human does."
+      "skills": [
+        "metric-monitoring",
+        "control-bands",
+        "incident-diagnosis",
+        "intent-drafting",
+        "parameter-drift-detection"
+      ],
+      "promptContext": "You watch production and never change it. bands.yaml defines the control bands: at 1σ you log, at 2σ you diagnose and write up what you found, at 3σ you propose by drafting a new intent.md for the Originator's stage. Separately, compare what the system is actually doing (data it touches, writes it makes, spend) with the parameters of use in ai-risk-assessment.md; any drift is a reassessment issue for the Assessment Agent, because approved use must stay within the parameters authorised. Everything you raise goes to the service owner's triage queue. You do not fix, schedule or dismiss; a human does. You may trigger the agent's named safe state on a safety band breach; that is pre-authorised and the one thing an agent may do to itself, and moving forward out of it goes through the gates. Envelope drift on personal data may be a reportable breach on the 72-hour clock, so raise it to the incident process as well as the reassessment queue. Serve access and erasure requests over transcripts, traces and logs within their stated retention. Runtime actions are never reverted by redeploy: a compensating write is authorised by the service owner and logged against the original."
     }
   ],
   "goals": [
@@ -189,14 +285,51 @@
       "title": "AI-native delivery under Mace governance",
       "description": "Deliver software with agents drafting every artefact and humans accepting every gate, with the audit trail in Git and the AI risk assessment on file before design starts",
       "children": [
-        { "title": "Plan — intent.md accepted", "description": "Every piece of work starts as an intent.md corrected and committed by the product owner", "assignee": "Originator Agent" },
-        { "title": "Assess — DAD05 gate passed", "description": "An AI risk assessment evidencing the six principles is accepted by the Software Design Authority before any design work; reassessment whenever the authorised parameters change", "assignee": "Assessment Agent" },
-        { "title": "Design — spec.md approved", "description": "Specs are written against live policy with concerns flagged first, and progress only on the product owner's decision", "assignee": "Design Agent" },
-        { "title": "Build — plan.md before code", "description": "No code is written until the engineer has corrected and committed the plan; all changes land by PR", "assignee": "Build Agent" },
-        { "title": "Test — findings inform, never decide", "description": "Every PR gets the REVIEW.md passes plus an assessment-conformance pass; humans review regulated and critical code", "assignee": "Verification Agent" },
-        { "title": "Deploy — named humans authorise", "description": "Code-owner approval for merge, release-manager authorisation for production, enforced by hook", "assignee": "Release Agent" },
-        { "title": "Maintain — bands and drift watched", "description": "Control bands trigger log, diagnose or propose; drift from authorised parameters triggers reassessment", "assignee": "Maintain Agent" },
-        { "title": "Separation of duties", "description": "No agent approves the artefact it produced, merges its own PR, sets its own release approval, or authorises its own writes (DAD05 §8.6)", "assignee": "Delivery Lead" }
+        {
+          "title": "Plan — intent.md accepted",
+          "description": "Every piece of work starts as an intent.md corrected and committed by the product owner",
+          "assignee": "Originator Agent"
+        },
+        {
+          "title": "Assess — DAD05 gate passed",
+          "description": "An AI risk assessment evidencing the six principles is accepted by the Software Design Authority before any design work; reassessment whenever the authorised parameters change",
+          "assignee": "Assessment Agent"
+        },
+        {
+          "title": "Design — spec.md approved",
+          "description": "Specs are written against live policy with concerns flagged first, and progress only on the product owner's decision",
+          "assignee": "Design Agent"
+        },
+        {
+          "title": "Build — plan.md before code",
+          "description": "No code is written until the engineer has corrected and committed the plan; all changes land by PR",
+          "assignee": "Build Agent"
+        },
+        {
+          "title": "Test — findings inform, never decide",
+          "description": "Every PR gets the REVIEW.md passes plus an assessment-conformance pass; humans review regulated and critical code",
+          "assignee": "Verification Agent"
+        },
+        {
+          "title": "Deploy — named humans authorise",
+          "description": "Code-owner approval for merge, release-manager authorisation for production, enforced by hook",
+          "assignee": "Release Agent"
+        },
+        {
+          "title": "Maintain — bands and drift watched",
+          "description": "Control bands trigger log, diagnose or propose; drift from authorised parameters triggers reassessment",
+          "assignee": "Maintain Agent"
+        },
+        {
+          "title": "Separation of duties",
+          "description": "No agent approves the artefact it produced, merges its own PR, sets its own release approval, or authorises its own writes (DAD05 §8.6)",
+          "assignee": "Delivery Lead"
+        },
+        {
+          "title": "Change governance — the envelope decides the class",
+          "description": "Standard inside the envelope, normal on any extension (reassessed), emergency reviewed within five working days, prohibited refused by the platform; rollback pre-authorised, safe state named, DPIA and residency accepted before Deploy",
+          "assignee": "Delivery Lead"
+        }
       ]
     }
   ],
@@ -264,6 +397,38 @@
       "assigneeAgent": "Assessment Agent",
       "project": "AI-Native SDLC pilot",
       "description": "CS-DIG-SD-0002 §1.3 also requires retrospective assessment of AI already in service, submitted to the Software Design Authority. List every deployed AI tool in scope for this team and schedule an assessment for each."
+    },
+    {
+      "title": "Gate 2 addendum — DPIA, residency statement, client agreement, EU AI Act class",
+      "status": "todo",
+      "priority": "urgent",
+      "assigneeAgent": "Assessment Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Extend ai-risk-assessment.md with the four sections the SDA needs beyond the six principles: linked DPIA (DPO consulted) or written reason none is needed; region and data boundary of every model call plus vendor processing terms (no-training, retention); client agreement reference with the Information Steward accountable; EU AI Act classification. Deploy is blocked until the DPIA and residency statement are accepted."
+    },
+    {
+      "title": "Define the safe state and prove rollback",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Release Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Name the agent's safe state (suspended, read-only, or pinned to the last accepted version) in the assessment; prove the platform can reach it without a person; prove a rollback to the previous immutable version works in test and is recorded as a pre-authorised standard change. Document when fix forward is required instead (old version now outside the envelope, old version unsafe, data moved forward, fault is Kind C)."
+    },
+    {
+      "title": "Injection, residency and real-data passes added to Test",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Verification Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Add to the PR checks: a prompt-injection and exfiltration pass (NCSC AI guidance, OWASP LLM Top 10) for any agent that reads documents or calls tools; a residency check that each model call goes to the region the spec states; and a check that no evaluation set or fixture in Git contains real personal or client data."
+    },
+    {
+      "title": "Log retention and fair-processing notice before publishing",
+      "status": "todo",
+      "priority": "medium",
+      "assigneeAgent": "Design Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Set the retention period for transcripts, traces, audit and write logs; confirm the lawful basis; get the staff fair-processing notice updated (and works-council consultation where EU staff are in scope); confirm access and erasure requests can be served over these stores. Approver: DPO."
     }
   ],
   "informationManagement": {
@@ -287,6 +452,251 @@
       "Any named governance body — here the Software Design Authority and the AI Governance Group under the CIO",
       "Reassessment on change — here the Maintain Agent watches for drift from the authorised parameters",
       "Bias and fairness — evidenced explicitly in the assessment because DAD05's own weakest principle match is Fairness"
+    ],
+    "governanceModel": "https://claude.ai/code/artifact/bd7c6b29-5761-430b-9004-8f5c1369c1d5",
+    "ruleCounts": {
+      "mandatory": 11,
+      "recommended": 5,
+      "prohibited": 3
+    }
+  },
+  "changeGovernance": {
+    "reference": "https://claude.ai/code/artifact/bd7c6b29-5761-430b-9004-8f5c1369c1d5",
+    "envelope": "The parameters of use accepted at Gate 2 (Assess): the data the agent may touch, the tools it may call, the people it may serve, the writes it may make, the model version it runs, and the money it may spend. Gate 2 is the only gate that can change the envelope; every other gate operates inside it.",
+    "changeClasses": {
+      "standard": "Stays inside the envelope. Agents draft, the gate owners accept in turn. No board, no reassessment.",
+      "normal": "Would extend the envelope on any axis. Software Design Authority reassesses (with the Information Steward where client data is in scope), then the gates run.",
+      "emergency": "Service failing or unsafe. Release manager authorises; Software Design Authority reviews within five working days.",
+      "prohibited": "Outside the envelope with no accepted reassessment. Nobody accepts it; the platform refuses it."
+    },
+    "kindsOfChange": {
+      "A_product": "Code, pipelines, models, reports, spaces, grants. Ordinary change with an agent as author. Control: the seven-gate artefact chain; the PR is the change request.",
+      "B_agent": "Instructions, tools, connectors, model version, evaluation set, budget. Versioned like code with code owners; every change re-runs the evaluation set; a tool, grant, model or budget change is a change to the envelope and is reassessed.",
+      "C_by_agent": "Runtime actions. Reads and drafts inside the envelope are pre-authorised; writes carry a human of record (DAD05 §8.6); everything else is refused by identity, grants, connector policy and cost ceilings with a typed refusal."
+    },
+    "rollbackAndFixForward": {
+      "precondition": "Every deployable is an immutable versioned artefact; if it cannot be named by version it cannot be rolled back, and the Build gate checks this.",
+      "rollback": "Default and pre-authorised: a previous version was already inside the envelope and already carried a release authorisation. Release manager triggers, service owner told, register entry made, nobody convenes. Right when the previous version is still inside the current envelope, the fault is Kind A or B, and nothing irreversible has happened since.",
+      "fixForward": "Required when the previous version is now outside the envelope (retired model, revoked grant, disallowed connector), when the previous version is the unsafe one, when data has moved forward under a migration, or when the fault is Kind C. Emergency path if the service is failing; gates compressed to hours, never skipped.",
+      "kindC": "Runtime actions are compensated, not reverted: a compensating write authorised by the service owner and logged against the original. Bulk corrections touching client data are reviewed by the Software Design Authority first.",
+      "safeState": "Every agent has a named safe state (suspended, read-only, or pinned to the last accepted version) the platform can reach without a person. Operate may trigger it on a safety band breach as a pre-authorised action; it is the one thing an agent may do to itself. Moving forward out of the safe state always goes through the gates.",
+      "platform": "Rollback = redeploy the previous tagged release; the production deploy hook still requires RELEASE_APPROVAL, which the assessment pre-grants for a rollback to a previously authorised version. A model rollback is a pin change in the agent definition and goes through Gate 5."
+    },
+    "obligations": [
+      {
+        "obligation": "DPIA (UK GDPR Art. 35)",
+        "ownedAt": "Assess; checked at Deploy",
+        "by": "DPO consulted; product owner accountable",
+        "note": "Separate document from the AI risk assessment, linked from it; go-live conditional on it"
+      },
+      {
+        "obligation": "Purpose limitation and minimisation",
+        "ownedAt": "Assess; enforced from Design",
+        "by": "Software Design Authority",
+        "note": "Grants, row-level security and scope in the envelope are the minimisation control and the assessment says so"
+      },
+      {
+        "obligation": "Logs are personal data",
+        "ownedAt": "Design sets retention; Operate serves requests",
+        "by": "DPO; service owner",
+        "note": "Transcripts, traces, audit and write logs: retention period, lawful basis, staff fair-processing notice, in scope for access and erasure"
+      },
+      {
+        "obligation": "Automated decision-making (Art. 22)",
+        "ownedAt": "Assess flags; Design specifies",
+        "by": "Product owner",
+        "note": "Where an output gates a payment, compliance pass or staffing decision, a human makes the decision"
+      },
+      {
+        "obligation": "Breach notification",
+        "ownedAt": "Operate",
+        "by": "Service owner; DPO",
+        "note": "Envelope drift on personal data may be a reportable breach on the 72-hour clock; feeds the incident process as well as reassessment"
+      },
+      {
+        "obligation": "Residency of every model call",
+        "ownedAt": "Design; verified at Test",
+        "by": "Technical lead",
+        "note": "State region and data boundary per model call; Claude in Foundry is US-only; Copilot Studio and Databricks have features that process outside the environment's region unless disabled"
+      },
+      {
+        "obligation": "International transfers",
+        "ownedAt": "Assess",
+        "by": "DPO; procurement",
+        "note": "UK-US Data Bridge or IDTA addendum only with vendor processing terms in place; check no-training and retention commitments (Azure OpenAI abuse monitoring retains prompts up to 30 days unless exempted)"
+      },
+      {
+        "obligation": "Client data bounded by the client's agreement",
+        "ownedAt": "Assess",
+        "by": "Information Steward (accountable) with the commercial owner",
+        "note": "DAD05 §9.1 and CS-DIG-SD-0002 §1.3; public-sector and NHS clients often mandate UK-only processing"
+      },
+      {
+        "obligation": "Prompt injection and exfiltration",
+        "ownedAt": "Test",
+        "by": "Security; engineer",
+        "note": "An agent that reads documents can be instructed by a document; NCSC AI guidance and OWASP LLM Top 10"
+      },
+      {
+        "obligation": "Tools and MCP servers are supply chain",
+        "ownedAt": "Design; Build",
+        "by": "Security; code owner",
+        "note": "Allow-lists and provenance; one non-human identity per agent, never shared"
+      },
+      {
+        "obligation": "Evaluation sets are a leak path",
+        "ownedAt": "Build; checked at Test",
+        "by": "Engineer; Information Steward",
+        "note": "No real personal or client data in Git: synthetic rows or a classified store referenced by the bundle"
+      },
+      {
+        "obligation": "Professional liability",
+        "ownedAt": "Standing, before first client use",
+        "by": "Commercial owner; legal",
+        "note": "Advice drafted by an agent and accepted by a person is that person's advice for PI purposes; confirm cover"
+      },
+      {
+        "obligation": "EU AI Act",
+        "ownedAt": "Assess",
+        "by": "Software Design Authority; legal",
+        "note": "Deployer obligations for EU operations from August 2026; transparency duties; check Annex III for safety, employment or access to services"
+      },
+      {
+        "obligation": "Records, retention and disclosure",
+        "ownedAt": "Operate",
+        "by": "Records management",
+        "note": "Outputs and the artefact chain are business records subject to retention, legal hold and disclosure"
+      }
+    ],
+    "rules": [
+      {
+        "class": "Mandatory",
+        "rule": "Every AI system has an accepted risk assessment that states its parameters of use before design starts, and that assessment is the definition of a standard change for that system."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Each of the seven gates names the human who accepted it, and the platform records that identity. An agent is never the approver of an artefact it produced."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Any change that would extend the parameters of use on any axis (data, tools, users, writes, model version, cost) is reassessed by the Software Design Authority before it is built."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "The agent definition is version-controlled with code owners, and no version deploys without a passing evaluation run against the evaluation set in Git."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Production deployments and agent publishing are blocked by the platform until a named release manager authorises them, and the authorisation is recorded."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Runtime writes carry the identity of the human who authorised them: the calling user on-behalf-of, or a pre-authorised write listed in the assessment. Writes refused for lack of authorisation return a typed refusal."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Emergency changes are authorised by the release manager and reviewed by the Software Design Authority within five working days, with the review recorded against the change."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Every deployable is an immutable versioned artefact, every AI system has a named safe state the platform can reach without a person, and returning to a previously accepted version or to the safe state is pre-authorised. Moving forward from it goes through the gates."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "The risk assessment links a DPIA, or records why none is needed, and states the region and data boundary of every model call and the vendor processing terms relied on. Deploy is blocked until both are accepted."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Client data enters an envelope only with the client's formal written agreement referenced in the assessment and the Information Steward's sign-off."
+      },
+      {
+        "class": "Mandatory",
+        "rule": "Evaluation sets and test fixtures in Git contain no real personal or client data."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Instructions to an agent are context, not control. Each governance rule has a preventive control that fails closed, independent of what the agent is told."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Operate compares the audit of what the agent read, wrote, served and spent with its parameters of use at least weekly; any variance is raised as a reassessment issue rather than tuned away."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Test-stage findings inform the human reviewer and are never configured to approve or block a change on their own."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Test includes a prompt-injection and exfiltration pass for any agent that reads documents or calls tools, and the findings are retained with the change."
+      },
+      {
+        "class": "Recommended",
+        "rule": "Transcripts, traces and audit logs have a stated retention period and are covered by the staff fair-processing notice before the agent is published."
+      },
+      {
+        "class": "Prohibited",
+        "rule": "An agent operating under a shared service identity making writes on behalf of users."
+      },
+      {
+        "class": "Prohibited",
+        "rule": "An agent setting, supplying or bypassing any approval, authorisation or hook, including its own budget ceiling."
+      },
+      {
+        "class": "Prohibited",
+        "rule": "Autonomous purchasing or any spend above the ceiling attached to the agent's identity."
+      }
+    ],
+    "raciAdditions": [
+      {
+        "decision": "Confirm client agreement, residency and DPIA for client or personal data",
+        "accountable": "Information Steward",
+        "responsible": "Assessment Agent",
+        "consulted": [
+          "Product owner",
+          "Software Design Authority"
+        ]
+      },
+      {
+        "decision": "Roll back to a previous version",
+        "accountable": "Release manager",
+        "responsible": "Engineer",
+        "consulted": [
+          "Service owner"
+        ],
+        "informed": [
+          "Product owner",
+          "Software Design Authority"
+        ]
+      },
+      {
+        "decision": "Compensating write (reverse a Kind C action)",
+        "accountable": "Service owner",
+        "responsible": "Agent",
+        "consulted": [
+          "Software Design Authority",
+          "Information Steward"
+        ]
+      },
+      {
+        "decision": "Change model, tools or budget (Kind B)",
+        "accountable": "Software Design Authority",
+        "responsible": "Engineer and agent",
+        "consulted": [
+          "Product owner"
+        ],
+        "informed": [
+          "AI Governance Group"
+        ]
+      },
+      {
+        "decision": "Retire or suspend an agent",
+        "accountable": "Software Design Authority",
+        "responsible": "Release manager",
+        "consulted": [
+          "Product owner",
+          "Service owner"
+        ]
+      }
     ]
   }
 }
