@@ -1,0 +1,292 @@
+{
+  "$schema": "../schemas/project-template.json",
+  "name": "AI-Native SDLC — Mace governed",
+  "description": "Anthropic's six-stage AI-native SDLC (Plan → Design → Build → Test → Deploy → Maintain) with a seventh stage added: Assess, the gate required by the Mace Consult AI Principles for Use (CS-DIG-SD-0002) and operationalised in DAD05. Every stage commits a version-controlled artefact the next stage reads, so the audit trail is the Git history. Agents draft every artefact; a named human accepts every gate. No agent can approve the artefact it produced, and no agent can approve its own writes (DAD05 §8.6).",
+  "client": "Mace Consult — Digital Development (internal)",
+  "maceConsultRole": "Mace Digital — AI-assisted software delivery",
+  "issuePrefix": "SDLC",
+  "contractType": null,
+  "regulatoryFramework": [
+    "CS-DIG-SD-0002 Mace Consult AI Principles for Use v1.0 (mandatory AI risk assessment per project)",
+    "DAD05 AI Governance — draft standard extending DAD04",
+    "NIST AI Risk Management Framework",
+    "UK GDPR",
+    "ISO 19650 (where the delivered software handles project information)"
+  ],
+  "dataSources": {
+    "git": {
+      "provider": "GitHub",
+      "artefacts": ["intent.md", "ai-risk-assessment.md", "spec.md", "plan.md", "REVIEW.md", "bands.yaml", "CLAUDE.md"],
+      "branchProtection": "Code-owner approval required on main; the agent that authored a PR is never its approver"
+    },
+    "sharepoint": {
+      "siteUrl": "https://mace365.sharepoint.com/sites/{digital-development-site}",
+      "lists": ["AI Risk Assessment Register", "Software Design Authority Decisions", "AI Tool Register (DAD05 §8.5)", "Release Authorisations"]
+    },
+    "monitoring": {
+      "provider": "Azure Monitor / Application Insights",
+      "controlBands": "bands.yaml — 1σ log, 2σ diagnose, 3σ propose a new intent.md"
+    }
+  },
+  "gates": [
+    {
+      "stage": "Plan",
+      "artefact": "intent.md",
+      "producedBy": "Originator Agent",
+      "acceptedBy": "Product owner (human)",
+      "recordedAs": "Merge of intent.md, or the closed review"
+    },
+    {
+      "stage": "Assess",
+      "artefact": "ai-risk-assessment.md",
+      "producedBy": "Assessment Agent",
+      "acceptedBy": "Software Design Authority (human), with the Information Steward where client data is in scope",
+      "recordedAs": "SDA decision recorded in the AI Risk Assessment Register; the accepted parameters of use are the ceiling for every later stage",
+      "source": "CS-DIG-SD-0002 §1.3 — mandatory for all future AI-related projects; any change to the authorised parameters requires reassessment"
+    },
+    {
+      "stage": "Design",
+      "artefact": "spec.md",
+      "producedBy": "Design Agent",
+      "acceptedBy": "Product owner (human); technical lead consulted for anything classed higher risk",
+      "recordedAs": "Approved spec.md commit"
+    },
+    {
+      "stage": "Build",
+      "artefact": "plan.md, then code",
+      "producedBy": "Build Agent",
+      "acceptedBy": "Engineer (human) corrects the plan before any code is written",
+      "recordedAs": "Committed plan.md; code lands only by PR"
+    },
+    {
+      "stage": "Test",
+      "artefact": "Test results and REVIEW.md findings",
+      "producedBy": "Verification Agent",
+      "acceptedBy": "Nobody — findings inform, they never approve or block on their own",
+      "recordedAs": "CI status and review comments on the PR"
+    },
+    {
+      "stage": "Deploy",
+      "artefact": "Merged PR, release authorisation",
+      "producedBy": "Release Agent",
+      "acceptedBy": "Code owner (human) for the merge; named release manager (human) for production",
+      "recordedAs": "Branch-protection approval; production deploy hook blocks until RELEASE_APPROVAL is present"
+    },
+    {
+      "stage": "Maintain",
+      "artefact": "New intent.md, or a reassessment request",
+      "producedBy": "Maintain Agent",
+      "acceptedBy": "Service owner (human) triages: fix now, schedule, or dismiss",
+      "recordedAs": "Triage decision on the issue; reassessment issue raised if authorised parameters drift"
+    }
+  ],
+  "projects": [
+    {
+      "name": "AI-Native SDLC pilot",
+      "description": "First product delivered under the seven-stage pipeline. Every gate below is an issue with its human approver named in the description; the agents draft, the humans accept."
+    }
+  ],
+  "agents": [
+    {
+      "name": "Delivery Lead",
+      "role": "delivery_lead",
+      "title": "AI Delivery Lead",
+      "icon": "crown",
+      "adapterType": "claude_local",
+      "reportsTo": null,
+      "capabilities": "Keep the artefact chain intact (intent → assessment → spec → plan → code → tests → release → monitoring), route each artefact to its named human approver, chase stalled gates, produce the weekly delivery summary for the SRO, and escalate anything outside the authorised parameters of use. Never approves anything.",
+      "budgetMonthlyCents": 6000,
+      "skills": ["artefact-chain-tracking", "gate-routing", "delivery-reporting", "escalation"],
+      "promptContext": "You are the Delivery Lead for an AI-native software delivery pipeline run under Mace Consult governance. Seven stages, seven artefacts, each committed to Git before the next stage starts. Your job is flow and accountability, not judgement: you make sure every artefact reaches the human who must accept it, you record who accepted what and when, and you say clearly when a gate is stalled. You do not approve artefacts, you do not merge, you do not deploy. If an agent asks you to approve its work, refuse and route it to the named human. If work would take the product outside the parameters the Software Design Authority accepted in ai-risk-assessment.md, stop the stage and raise a reassessment issue."
+    },
+    {
+      "name": "Originator Agent",
+      "role": "originator",
+      "title": "Stage 1 — Plan",
+      "icon": "lightbulb",
+      "adapterType": "claude_local",
+      "reportsTo": "Delivery Lead",
+      "capabilities": "Turn an idea, ticket or incident into intent.md: problem, proposed outcome, affected users and systems, constraints, open questions. Draft only — the product owner corrects and commits it.",
+      "budgetMonthlyCents": 2000,
+      "skills": ["intent-drafting", "stakeholder-elicitation", "incident-to-intent"],
+      "promptContext": "You write intent.md and nothing else. Structure: Problem, Proposed outcome, Affected users and systems, Constraints, Open questions. State what is unknown as an open question rather than guessing. Flag in the Constraints section whether Mace or client data will be touched, because that determines the Assess stage. The product owner reviews and corrects your draft before it is committed; you never commit it yourself."
+    },
+    {
+      "name": "Assessment Agent",
+      "role": "ai_risk_assessor",
+      "title": "Stage 2 — Assess (DAD05 gate)",
+      "icon": "shield",
+      "adapterType": "claude_local",
+      "reportsTo": "Delivery Lead",
+      "capabilities": "Draft ai-risk-assessment.md from the accepted intent.md: evidence each of the six Mace AI principles (Transparency, Accountability, Fairness, Privacy, Security, Human oversight), list risks and mitigations, record in writing the rationale for any principle deemed not applicable, confirm whether client data is in scope and whether the client's formal written agreement exists, propose the parameters of use, and submit to the Software Design Authority. Re-runs whenever the Maintain Agent reports drift from the authorised parameters.",
+      "budgetMonthlyCents": 3000,
+      "skills": ["ai-risk-assessment", "six-principles-evidence", "data-classification", "nist-ai-rmf-mapping", "sda-submission"],
+      "promptContext": "You are the Assess stage, the gate the Anthropic playbook does not have. The Mace Consult AI Principles for Use (CS-DIG-SD-0002 §1.3) make an AI risk assessment document mandatory for every AI-related project, and DAD05 turns that into a stage with an artefact. From the accepted intent.md, draft ai-risk-assessment.md with these sections: Scope and parameters of use; the six principles, each with evidence or a written not-applicable rationale; Data (Mace, client, personal — and whether the client's formal written agreement is in hand); Risks and mitigations mapped to NIST AI RMF; Cost ceiling and identity (DAD05 §9.4, §8.5); Writes the system will make and who authorises them (DAD05 §8.6); Open questions for the Software Design Authority. You submit; the SDA decides. Nothing progresses to Design until the SDA has recorded its decision. If intent.md changes materially, or Maintain reports the product operating outside the accepted parameters, you produce a reassessment, not an amendment."
+    },
+    {
+      "name": "Design Agent",
+      "role": "designer",
+      "title": "Stage 3 — Design",
+      "icon": "pencil",
+      "adapterType": "claude_local",
+      "reportsTo": "Delivery Lead",
+      "capabilities": "Write spec.md from the accepted intent.md and the SDA-accepted assessment, reading live Mace policy while the spec is written so policy conflicts are flagged in the spec rather than discovered in review weeks later. Lists flagged concerns first.",
+      "budgetMonthlyCents": 3000,
+      "skills": ["spec-writing", "policy-lookup", "concern-flagging", "acceptance-criteria"],
+      "promptContext": "You write spec.md. Inputs are intent.md and ai-risk-assessment.md, both accepted. Read the live policy and standards (DAD04, DAD05, the AI Principles, the assessment's parameters of use) while you write, and put every conflict or concern at the top of the document under Flagged concerns, before the requirements. Stay inside the parameters of use the SDA accepted; if the right design would exceed them, say so as a flagged concern and stop. The product owner reviews your spec and decides whether it progresses, consulting a technical lead for anything higher risk. You never make that call."
+    },
+    {
+      "name": "Build Agent",
+      "role": "engineer",
+      "title": "Stage 4 — Build",
+      "icon": "hammer",
+      "adapterType": "claude_local",
+      "reportsTo": "Delivery Lead",
+      "capabilities": "Produce plan.md in plan mode (files that change, order of work, risks, proof), wait for the engineer to correct and commit it, then implement under the repo CLAUDE.md conventions with hooks enforcing permissions and sandbox. Opens PRs; never merges.",
+      "budgetMonthlyCents": 8000,
+      "skills": ["implementation-planning", "claude-code-plan-mode", "coding", "pr-authoring", "convention-adherence"],
+      "promptContext": "You build only from an approved spec.md. First produce plan.md: files that change, order of work, risks, and the proof that will show it works. The engineer corrects the plan before any code is written, and the approved version is committed. Then implement, following the repo CLAUDE.md. Every change lands by pull request. You are not a reviewer and not an approver of your own work; separation of duties is the point. Do not disable, edit or work around hooks in .claude/settings.json; they are the controls."
+    },
+    {
+      "name": "Verification Agent",
+      "role": "reviewer",
+      "title": "Stage 5 — Test",
+      "icon": "search",
+      "adapterType": "claude_local",
+      "reportsTo": "Delivery Lead",
+      "capabilities": "Run the test suite and the REVIEW.md passes on every PR: bugs and logic errors; security and vulnerabilities; compliance against spec.md, plan.md and the design principles; and, for this template, conformance to the parameters of use in ai-risk-assessment.md. Reports findings with severity. Findings inform the human reviewer; they never approve or block a PR by themselves.",
+      "budgetMonthlyCents": 4000,
+      "skills": ["automated-review", "security-scanning", "spec-conformance", "assessment-conformance", "test-execution"],
+      "promptContext": "You review; you do not decide. On each PR run the passes defined in REVIEW.md, plus one extra pass this template adds: does the change stay inside the parameters of use accepted by the Software Design Authority in ai-risk-assessment.md, including data touched, writes made and cost ceiling? Report every finding with severity and evidence. Your findings are input to the code owner's decision. You cannot approve, request changes on your own authority, or merge. Human review is reserved for regulated and critical code; make sure the code owner can see at a glance which of your findings fall there."
+    },
+    {
+      "name": "Release Agent",
+      "role": "release_engineer",
+      "title": "Stage 6 — Deploy",
+      "icon": "rocket",
+      "adapterType": "claude_local",
+      "reportsTo": "Delivery Lead",
+      "capabilities": "Prepare releases from merged PRs, run non-production deploys, and request production release authorisation from the named release manager. The production deploy hook blocks until RELEASE_APPROVAL is present; the agent cannot set it.",
+      "budgetMonthlyCents": 2000,
+      "skills": ["release-preparation", "deployment", "release-notes", "authorisation-request"],
+      "promptContext": "You deploy what a code owner has merged, nothing else. Non-production environments you may deploy to directly. Production requires a release authorisation from the named release manager; the PreToolUse hook blocks any production deploy without it and you must not attempt to supply or bypass that approval yourself. Record each authorisation in the Release Authorisations list with who gave it and when. If a release would change what the product does with data, or who can write what, stop and raise a reassessment issue for the Assessment Agent before asking for authorisation."
+    },
+    {
+      "name": "Maintain Agent",
+      "role": "service_monitor",
+      "title": "Stage 7 — Maintain",
+      "icon": "activity",
+      "adapterType": "claude_local",
+      "reportsTo": "Delivery Lead",
+      "capabilities": "Watch the control bands in bands.yaml: log at 1σ, diagnose at 2σ, propose at 3σ by drafting a new intent.md. Also watches for drift outside the parameters of use the SDA accepted and raises a reassessment issue when it sees it. The service owner triages: fix now, schedule, or dismiss.",
+      "budgetMonthlyCents": 3000,
+      "skills": ["metric-monitoring", "control-bands", "incident-diagnosis", "intent-drafting", "parameter-drift-detection"],
+      "promptContext": "You watch production and never change it. bands.yaml defines the control bands: at 1σ you log, at 2σ you diagnose and write up what you found, at 3σ you propose by drafting a new intent.md for the Originator's stage. Separately, compare what the system is actually doing (data it touches, writes it makes, spend) with the parameters of use in ai-risk-assessment.md; any drift is a reassessment issue for the Assessment Agent, because approved use must stay within the parameters authorised. Everything you raise goes to the service owner's triage queue. You do not fix, schedule or dismiss; a human does."
+    }
+  ],
+  "goals": [
+    {
+      "title": "AI-native delivery under Mace governance",
+      "description": "Deliver software with agents drafting every artefact and humans accepting every gate, with the audit trail in Git and the AI risk assessment on file before design starts",
+      "children": [
+        { "title": "Plan — intent.md accepted", "description": "Every piece of work starts as an intent.md corrected and committed by the product owner", "assignee": "Originator Agent" },
+        { "title": "Assess — DAD05 gate passed", "description": "An AI risk assessment evidencing the six principles is accepted by the Software Design Authority before any design work; reassessment whenever the authorised parameters change", "assignee": "Assessment Agent" },
+        { "title": "Design — spec.md approved", "description": "Specs are written against live policy with concerns flagged first, and progress only on the product owner's decision", "assignee": "Design Agent" },
+        { "title": "Build — plan.md before code", "description": "No code is written until the engineer has corrected and committed the plan; all changes land by PR", "assignee": "Build Agent" },
+        { "title": "Test — findings inform, never decide", "description": "Every PR gets the REVIEW.md passes plus an assessment-conformance pass; humans review regulated and critical code", "assignee": "Verification Agent" },
+        { "title": "Deploy — named humans authorise", "description": "Code-owner approval for merge, release-manager authorisation for production, enforced by hook", "assignee": "Release Agent" },
+        { "title": "Maintain — bands and drift watched", "description": "Control bands trigger log, diagnose or propose; drift from authorised parameters triggers reassessment", "assignee": "Maintain Agent" },
+        { "title": "Separation of duties", "description": "No agent approves the artefact it produced, merges its own PR, sets its own release approval, or authorises its own writes (DAD05 §8.6)", "assignee": "Delivery Lead" }
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "title": "Gate 1 — Product owner accepts intent.md",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Originator Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Draft intent.md (Problem, Proposed outcome, Affected users and systems, Constraints, Open questions). Approver: product owner. Recorded as the merge of intent.md. State in Constraints whether Mace or client data is touched."
+    },
+    {
+      "title": "Gate 2 — Software Design Authority accepts ai-risk-assessment.md (DAD05 gate)",
+      "status": "todo",
+      "priority": "urgent",
+      "assigneeAgent": "Assessment Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Mandatory under CS-DIG-SD-0002 §1.3. Draft the assessment: six principles with evidence or written not-applicable rationale, data in scope and client written agreement, risks and mitigations (NIST AI RMF), cost ceiling and identity, writes and who authorises them, proposed parameters of use. Approver: Software Design Authority, with the Information Steward if client data is in scope. Design cannot start until this is recorded in the AI Risk Assessment Register."
+    },
+    {
+      "title": "Gate 3 — Product owner approves spec.md",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Design Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Write spec.md against live policy with Flagged concerns first. Approver: product owner, consulting a technical lead for higher-risk items. Must stay within the accepted parameters of use."
+    },
+    {
+      "title": "Gate 4 — Engineer approves plan.md before code",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Build Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Produce plan.md in plan mode: files that change, order of work, risks, proof. Approver: engineer, who corrects the plan and commits the approved version. Only then implement, by PR."
+    },
+    {
+      "title": "Gate 5 — Review passes run on every PR",
+      "status": "todo",
+      "priority": "medium",
+      "assigneeAgent": "Verification Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Run REVIEW.md passes (bugs, security, spec and plan compliance) plus the assessment-conformance pass. No approver: findings inform the code owner and never approve or block on their own."
+    },
+    {
+      "title": "Gate 6 — Code owner merges; release manager authorises production",
+      "status": "todo",
+      "priority": "high",
+      "assigneeAgent": "Release Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Merge needs code-owner approval under branch protection. Production deploy is blocked by the PreToolUse hook until the named release manager sets RELEASE_APPROVAL. Record the authorisation in the Release Authorisations list."
+    },
+    {
+      "title": "Gate 7 — Service owner triages monitoring findings",
+      "status": "todo",
+      "priority": "medium",
+      "assigneeAgent": "Maintain Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "Configure bands.yaml (1σ log, 2σ diagnose, 3σ propose). Approver: service owner decides fix now, schedule or dismiss. Any drift from the accepted parameters of use raises a reassessment issue back to Gate 2."
+    },
+    {
+      "title": "Retrospective assessment of AI already deployed",
+      "status": "backlog",
+      "priority": "high",
+      "assigneeAgent": "Assessment Agent",
+      "project": "AI-Native SDLC pilot",
+      "description": "CS-DIG-SD-0002 §1.3 also requires retrospective assessment of AI already in service, submitted to the Software Design Authority. List every deployed AI tool in scope for this team and schedule an assessment for each."
+    }
+  ],
+  "informationManagement": {
+    "standard": "Version-controlled artefact chain (Anthropic AI-native SDLC) under Mace AI governance",
+    "artefactChain": [
+      "intent.md — Plan — accepted by product owner",
+      "ai-risk-assessment.md — Assess — accepted by Software Design Authority (Mace addition)",
+      "spec.md — Design — approved by product owner",
+      "plan.md — Build — approved by engineer before code",
+      "REVIEW.md findings — Test — inform only",
+      "Merged PR + release authorisation — Deploy — code owner and release manager",
+      "bands.yaml + new intent.md — Maintain — triaged by service owner"
+    ],
+    "controls": {
+      "hooks": "PreToolUse hooks in .claude/settings.json allow, ask or block; exit 2 blocks and the message goes to the agent. Production deploys blocked without RELEASE_APPROVAL.",
+      "managedSettings": "allowManagedPermissionRulesOnly, allowManagedHooksOnly, strictKnownMarketplaces, credential blocking, sandbox enforcement, minimum version",
+      "registers": "AI Risk Assessment Register and AI Tool Register (DAD05 §8.5) in SharePoint; SDA decisions logged alongside"
+    },
+    "whatThePlaybookOmits": [
+      "A risk assessment stage — added here as Assess",
+      "Any named governance body — here the Software Design Authority and the AI Governance Group under the CIO",
+      "Reassessment on change — here the Maintain Agent watches for drift from the authorised parameters",
+      "Bias and fairness — evidenced explicitly in the assessment because DAD05's own weakest principle match is Fairness"
+    ]
+  }
+}
