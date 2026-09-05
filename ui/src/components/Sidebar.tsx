@@ -1,18 +1,19 @@
 import {
-  Inbox,
-  CircleDot,
-  Target,
-  Goal,
-  LayoutDashboard,
-  DollarSign,
-  History,
-  Search,
-  SquarePen,
-  Network,
+  BookOpen,
   Boxes,
-  Repeat,
-  Settings,
+  CircleDot,
+  DollarSign,
+  Goal,
+  History,
+  Inbox,
+  LayoutDashboard,
   LayoutTemplate,
+  Network,
+  Repeat,
+  Search,
+  Settings,
+  SquarePen,
+  Target,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarSection } from "./SidebarSection";
@@ -104,6 +105,7 @@ export function Sidebar() {
           <SidebarNavItem to="/routines" label="Routines" icon={Repeat} textBadge="Beta" textBadgeTone="amber" />
           <SidebarNavItem to="/goals" label="Goals" icon={Target} />
           <SidebarNavItem to="/programme" label="Programme" icon={Goal} />
+          <SidebarNavItem to="/how-to-use" label="How to use" icon={BookOpen} />
         </SidebarSection>
 
         <SidebarProjects />
