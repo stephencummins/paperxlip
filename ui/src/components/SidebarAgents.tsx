@@ -6,6 +6,8 @@ import { useCompany } from "../context/CompanyContext";
 import { useDialog } from "../context/DialogContext";
 import { useSidebar } from "../context/SidebarContext";
 import { agentsApi } from "../api/agents";
+import { issuesApi } from "../api/issues";
+import { projectsApi } from "../api/projects";
 import { heartbeatsApi } from "../api/heartbeats";
 import { queryKeys } from "../lib/queryKeys";
 import { cn, agentRouteRef, agentUrl } from "../lib/utils";
@@ -16,7 +18,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import type { Agent } from "@paperclipai/shared";
+import type { Agent, Issue, Project } from "@paperclipai/shared";
 
 /** BFS sort: roots first (no reportsTo), then their direct reports, etc. */
 function sortByHierarchy(agents: Agent[]): Agent[] {
@@ -67,12 +69,46 @@ export function SidebarAgents() {
     return counts;
   }, [liveRuns]);
 
-  const visibleAgents = useMemo(() => {
-    const filtered = (agents ?? []).filter(
-      (a: Agent) => a.status !== "terminated"
-    );
-    return sortByHierarchy(filtered);
-  }, [agents]);
+  // Inside a project, list only the agents with work in it (assignees of its
+  // issues plus its lead); everywhere else, the whole company.
+  const projectMatch = location.pathname.match(/^\/(?:[^/]+\/)?projects\/([^/]+)/);
+  const projectRef = projectMatch?.[1] ?? null;
+
+  const { data: projects } = useQuery({
+    queryKey: queryKeys.projects.list(selectedCompanyId!),
+    queryFn: () => projectsApi.list(selectedCompanyId!),
+    enabled: !!selectedCompanyId && !!projectRef,
+  });
+  const { data: issues } = useQuery({
+    queryKey: queryKeys.issues.list(selectedCompanyId!),
+    queryFn: () => issuesApi.list(selectedCompanyId!),
+    enabled: !!selectedCompanyId && !!projectRef,
+  });
+
+  const scopedProject = useMemo(() => {
+    if (!projectRef) return null;
+    return (projects ?? []).find((pr: Project) => pr.id === projectRef || pr.urlKey === projectRef) ?? null;
+  }, [projects, projectRef]);
+
+  const projectAgentIds = useMemo(() => {
+    if (!scopedProject) return null;
+    const ids = new Set<string>();
+    if (scopedProject.leadAgentId) ids.add(scopedProject.leadAgentId);
+    for (const i of issues ?? []) {
+      if ((i as Issue).projectId === scopedProject.id && (i as Issue).assigneeAgentId) ids.add((i as Issue).assigneeAgentId as string);
+    }
+    return ids;
+  }, [scopedProject, issues]);
+
+  const allAgents = useMemo(
+    () => sortByHierarchy((agents ?? []).filter((a: Agent) => a.status !== "terminated")),
+    [agents],
+  );
+  const scoped = !!projectAgentIds && projectAgentIds.size > 0;
+  const visibleAgents = useMemo(
+    () => (scoped ? allAgents.filter((a: Agent) => projectAgentIds!.has(a.id)) : allAgents),
+    [allAgents, scoped, projectAgentIds],
+  );
 
   const agentMatch = location.pathname.match(/^\/(?:[^/]+\/)?agents\/([^/]+)(?:\/([^/]+))?/);
   const activeAgentId = agentMatch?.[1] ?? null;
@@ -90,8 +126,8 @@ export function SidebarAgents() {
                 open && "rotate-90"
               )}
             />
-            <span className="text-[10px] font-medium uppercase tracking-widest font-mono text-muted-foreground/60">
-              Agents
+            <span className="text-[10px] font-medium uppercase tracking-widest font-mono text-muted-foreground/60 truncate">
+              {scoped ? `Agents · ${scopedProject!.name}` : "Agents"}
             </span>
           </CollapsibleTrigger>
           <button
@@ -148,6 +184,17 @@ export function SidebarAgents() {
               </NavLink>
             );
           })}
+          {scoped && allAgents.length > visibleAgents.length ? (
+            <NavLink
+              to="/agents"
+              onClick={() => {
+                if (isMobile) setSidebarOpen(false);
+              }}
+              className="px-3 py-1.5 text-[11px] text-muted-foreground/70 hover:text-foreground transition-colors"
+            >
+              all {allAgents.length} agents
+            </NavLink>
+          ) : null}
         </div>
       </CollapsibleContent>
     </Collapsible>
