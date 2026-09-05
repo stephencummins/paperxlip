@@ -77,12 +77,12 @@ export function SidebarAgents() {
   const { data: projects } = useQuery({
     queryKey: queryKeys.projects.list(selectedCompanyId!),
     queryFn: () => projectsApi.list(selectedCompanyId!),
-    enabled: !!selectedCompanyId && !!projectRef,
+    enabled: !!selectedCompanyId,
   });
   const { data: issues } = useQuery({
     queryKey: queryKeys.issues.list(selectedCompanyId!),
     queryFn: () => issuesApi.list(selectedCompanyId!),
-    enabled: !!selectedCompanyId && !!projectRef,
+    enabled: !!selectedCompanyId,
   });
 
   const scopedProject = useMemo(() => {
@@ -104,11 +104,27 @@ export function SidebarAgents() {
     () => sortByHierarchy((agents ?? []).filter((a: Agent) => a.status !== "terminated")),
     [agents],
   );
+
+  // Outside a project: only agents in use, meaning an open issue assigned,
+  // a live run, or a project lead role. The rest sit behind "all N agents".
+  const inUseAgentIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const pr of projects ?? []) if (pr.leadAgentId && !pr.archivedAt) ids.add(pr.leadAgentId);
+    for (const i of issues ?? []) {
+      const iss = i as Issue;
+      if (iss.assigneeAgentId && iss.status !== "done" && iss.status !== "cancelled") ids.add(iss.assigneeAgentId);
+    }
+    for (const id of liveCountByAgent.keys()) ids.add(id);
+    return ids;
+  }, [projects, issues, liveCountByAgent]);
+
   const scoped = !!projectAgentIds && projectAgentIds.size > 0;
-  const visibleAgents = useMemo(
-    () => (scoped ? allAgents.filter((a: Agent) => projectAgentIds!.has(a.id)) : allAgents),
-    [allAgents, scoped, projectAgentIds],
-  );
+  const visibleAgents = useMemo(() => {
+    if (scoped) return allAgents.filter((a: Agent) => projectAgentIds!.has(a.id));
+    if (issues === undefined) return allAgents; // still loading: show everything rather than flash empty
+    const used = allAgents.filter((a: Agent) => inUseAgentIds.has(a.id));
+    return used.length > 0 ? used : allAgents;
+  }, [allAgents, scoped, projectAgentIds, inUseAgentIds, issues]);
 
   const agentMatch = location.pathname.match(/^\/(?:[^/]+\/)?agents\/([^/]+)(?:\/([^/]+))?/);
   const activeAgentId = agentMatch?.[1] ?? null;
@@ -184,7 +200,7 @@ export function SidebarAgents() {
               </NavLink>
             );
           })}
-          {scoped && allAgents.length > visibleAgents.length ? (
+          {allAgents.length > visibleAgents.length ? (
             <NavLink
               to="/agents"
               onClick={() => {
