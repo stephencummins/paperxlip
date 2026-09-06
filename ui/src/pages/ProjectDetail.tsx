@@ -194,7 +194,8 @@ function ProjectIssuesList({ projectId, companyId }: { projectId: string; compan
       agents={agents}
       liveIssueIds={liveIssueIds}
       projectId={projectId}
-      viewStateKey={`paperclip:project-view:${projectId}`}
+      viewStateKey={`paperclip:project-board:${projectId}`}
+      defaultViewMode="board"
       onUpdateIssue={(id, data) => updateIssue.mutate({ id, data })}
     />
   );

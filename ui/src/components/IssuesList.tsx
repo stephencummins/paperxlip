@@ -70,12 +70,12 @@ const quickFilterPresets = [
   { label: "Done", statuses: ["done", "cancelled"] },
 ];
 
-function getViewState(key: string): IssueViewState {
+function getViewState(key: string, defaults: IssueViewState = defaultViewState): IssueViewState {
   try {
     const raw = localStorage.getItem(key);
-    if (raw) return { ...defaultViewState, ...JSON.parse(raw) };
+    if (raw) return { ...defaults, ...JSON.parse(raw) };
   } catch { /* ignore */ }
-  return { ...defaultViewState };
+  return { ...defaults };
 }
 
 function saveViewState(key: string, state: IssueViewState) {
@@ -165,6 +165,8 @@ interface IssuesListProps {
   liveIssueIds?: Set<string>;
   projectId?: string;
   viewStateKey: string;
+  /** View used until the person picks one themselves. Projects open on the board. */
+  defaultViewMode?: IssueViewState["viewMode"];
   issueLinkState?: unknown;
   initialAssignees?: string[];
   initialSearch?: string;
@@ -181,6 +183,7 @@ export function IssuesList({
   liveIssueIds,
   projectId,
   viewStateKey,
+  defaultViewMode,
   issueLinkState,
   initialAssignees,
   initialSearch,
@@ -197,12 +200,16 @@ export function IssuesList({
 
   // Scope the storage key per company so folding/view state is independent across companies.
   const scopedKey = selectedCompanyId ? `${viewStateKey}:${selectedCompanyId}` : viewStateKey;
+  const defaults = useMemo<IssueViewState>(
+    () => ({ ...defaultViewState, viewMode: defaultViewMode ?? defaultViewState.viewMode }),
+    [defaultViewMode],
+  );
 
   const [viewState, setViewState] = useState<IssueViewState>(() => {
     if (initialAssignees) {
-      return { ...defaultViewState, assignees: initialAssignees, statuses: [] };
+      return { ...defaults, assignees: initialAssignees, statuses: [] };
     }
-    return getViewState(scopedKey);
+    return getViewState(scopedKey, defaults);
   });
   const [assigneePickerIssueId, setAssigneePickerIssueId] = useState<string | null>(null);
   const [assigneeSearch, setAssigneeSearch] = useState("");
@@ -227,10 +234,10 @@ export function IssuesList({
     if (prevScopedKey.current !== scopedKey) {
       prevScopedKey.current = scopedKey;
       setViewState(initialAssignees
-        ? { ...defaultViewState, assignees: initialAssignees, statuses: [] }
-        : getViewState(scopedKey));
+        ? { ...defaults, assignees: initialAssignees, statuses: [] }
+        : getViewState(scopedKey, defaults));
     }
-  }, [scopedKey, initialAssignees]);
+  }, [scopedKey, initialAssignees, defaults]);
 
   const updateView = useCallback((patch: Partial<IssueViewState>) => {
     setViewState((prev) => {
